@@ -1,0 +1,129 @@
+{% extends 'inventaire/base.html' %}
+
+{% load static %}
+{% load inventaire_extras %}
+
+{% block titre %}
+<title>OASIS - Accueil</title>
+{% endblock %}
+
+{% block require_script %}
+<script type="text/javascript" src="{% static 'inventaire/ext/chart.js' %}"></script>
+{% endblock %}
+
+{% block contenu_principal %}
+{# la barre du haut du contenu #}
+<div class="is-title-bar mb-6">
+    <div class="level">
+        <div class="level-left">
+            <div class="level-item">
+                <h1 class="title mt-2 mb-2">Accueil</h1>
+            </div>
+        </div>
+        <div class="level-right">
+            <div class="level-item">
+                <div class="content is-flex is-flex-direction-column is-align-items-end">
+                    <p class="heading">Systemes</p>
+                    <p><strong>{{ total_systemes }}</strong></p>
+                </div>
+            </div>
+            <div class="level-item">
+                <div class="content is-flex is-flex-direction-column is-align-items-end">
+                    <p class="heading">Contrats</p>
+                    <p><strong>{{ total_contrats }}</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# les cartes avec les éléments à renseigner #}
+{# les 3 petits graphiques #}
+<div class="grid">
+    {# le graphique des domaines métiers #}
+    <div class="cell">
+        <div class="card">
+            <div class="card-header has-background-info-soft">
+                <p class="card-header-title">Répartition des domaines métiers</p>
+            </div>
+            <div class="card-content">
+                <canvas id="stat_pie_domaine_metier"></canvas>
+            </div>
+        </div>
+    </div>
+    {# le graphique des S2I par villes #}
+    <div class="cell">
+        <div class="card">
+            <div class="card-header has-background-info-soft">
+                <p class="card-header-title">Nombres de S2I par villes</p>
+            </div>
+            <div class="card-content">
+                <canvas id="stat_pie_nom_ville"></canvas>
+            </div>
+        </div>
+    </div>
+    {# le graphique des S2I par classe d'homologation #}
+    <div class="cell">
+        <div class="card">
+            <div class="card-header has-background-info-soft">
+                <p class="card-header-title">Répartition par classe</p>
+            </div>
+            <div class="card-content">
+                <canvas id="stat_pie_homologation_classe"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# la mega carte #}
+<div class="card">
+    <div class="card-header has-background-info-soft">
+        <p class="card-header-title">Carte</p>
+    </div>
+    <div class="card-image">
+        <figure class="image is-2by1">
+            <img src="{% static 'inventaire/carte_esid.png' %}" alt="carte périmétrique">
+        </figure>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_script %}
+<script>
+const ctx_pie_domaine_metier = document.getElementById('stat_pie_domaine_metier').getContext('2d');
+new Chart(ctx_pie_domaine_metier, {
+    type: 'pie',
+    data: {
+      labels: {{ stat.pie_domaine_metier.label|safe }},
+      datasets: [{
+        label: 'Répartition par domaine métier',
+        data: {{ stat.pie_domaine_metier.data|safe }},
+      }]
+    },
+  });
+const ctx_pie_nom_ville = document.getElementById('stat_pie_nom_ville').getContext('2d');
+new Chart(ctx_pie_nom_ville, {
+    type: 'pie',
+    data: {
+      labels: {{ stat.pie_nom_ville.label|safe }},
+      datasets: [{
+        label: 'Répartition par ville',
+        data: {{ stat.pie_nom_ville.data|safe }},
+      }]
+    },
+  });
+const ctx_pie_homologation_classe = document.getElementById('stat_pie_homologation_classe').getContext('2d');
+new Chart(ctx_pie_homologation_classe, {
+    type: 'pie',
+    data: {
+      labels: {{ stat.pie_homologation_classe.label|safe }},
+      datasets: [{
+        label: 'Répartition par classe d\'homologation',
+        data: {{ stat.pie_homologation_classe.data|safe }},
+      }]
+    },
+  });
+
+
+</script>
+{% endblock %}

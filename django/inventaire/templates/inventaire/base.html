@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+{% load static %}
+{% load inventaire_extras %}
+
+<html id="html" class="has-aside-left has-aside-mobile-transition has-navbar-fixed-top has-aside-expanded" lang="fr" data-theme="">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% block titre %}
+    <title>OASIS</title>
+    {% endblock %}
+    <link rel="icon" type="image/vnd.icon" href="{% static 'inventaire/favicon.ico' %}">
+
+    {# l'ensemble des fonctions de Bulma est inclu #}
+    <link rel="stylesheet" href="{% static 'inventaire/ext/bulma.css' %}">
+    {# le css pour customiser certains aspects de Bulma (en partie extrait de AdminOne) #}
+    <link rel="stylesheet" href="{% static 'inventaire/bulma_extras.css' %}">
+
+    {# les icônes #}
+    <link rel="stylesheet" href="{% static 'fontawesomefree/css/fontawesome.css' %}">
+    <link rel="stylesheet" href="{% static 'fontawesomefree/css/solid.css' %}">
+
+    <script>
+        // active le theme s'il est stocké
+        document.getElementById("html").attributes["data-theme"].value = localStorage.getItem("theme")
+    </script>
+    {% block require_script %}
+    {% endblock %}
+</head>
+
+<body>
+<div id="app">
+    {# la barre d'état du haut #}
+    <nav id="navbar-main" class="navbar is-fixed-top">
+        {# mode mobile #}
+        <div class="navbar-brand">
+            <a id="id_mobile_toggle_aside" class="navbar-item is-hidden-desktop">
+                <span class="icon"><i class="fa-solid fa-bars"></i></span>
+            </a>
+        </div>
+        <div class="navbar-brand is-right">
+            <a id="id_mobile_toggle_navbar" class="navbar-item is-hidden-desktop">
+                <span class="icon"><i class="fa-solid fa-ellipsis-vertical"></i></span>
+            </a>
+        </div>
+        {# mode bureau #}
+        <div class="navbar-menu" id="navbar-menu">
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <span id="id_theme_toggle" class="icon is-clickable"><i class="fa-solid fa-circle-half-stroke"></i></span>
+                </div>
+                {% if user.is_authenticated %}
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link is-arrowless">
+                        <div class="icon-text">
+                            <span class="icon"><i class="fa-solid fa-user"></i></span>
+                            <span>{{ user.get_full_name }}</span>
+                        </div>
+                    </a>
+                    <div class="navbar-dropdown is-right">
+                        <div class="navbar-item">
+                            <form id="form-logout" action="{% url 'inventaire:logout' %}" method="post">
+                                {% csrf_token %}
+                                <div class="buttons">
+                                    <button type="submit" class="button is-danger is-soft">Déconnexion</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    {# le menu latéral de navigation #}
+    <aside class="aside is-placed-left is-expanded">
+        <div class="has-text-centered">
+            <figure class="image is-inline-block m-4">
+                <img src="{% static 'inventaire/logo_oasis.webp' %}" alt="logo OASIS">
+            </figure>
+        </div>
+
+        <div id="id_menu" class="menu is-menu-main">
+            <ul class="menu-list">
+                <li><a href="{% url 'inventaire:accueil' %}" class="{{ actif|bulma_menu_actif:'accueil' }}has-icon">
+                    <span class="icon-text">
+                        <span class="icon"><i class="fa-solid fa-home"></i></span>
+                        <span>Accueil</span>
+                    </span>
+                </a></li>
+                <li><a href="{% url 'inventaire:systemes_recherche' %}" class="{{ actif|bulma_menu_actif:'systemes' }}has-icon">
+                    <span class="icon-text">
+                        <span class="icon"><i class="fa-solid fa-industry"></i></span>
+                        <span>Mes systèmes</span>
+                    </span>
+                </a></li>
+                <li><a href="{% url 'inventaire:contrats_recherche' %}" class="{{ actif|bulma_menu_actif:'contrats' }}has-icon">
+                    <span class="icon-text">
+                        <span class="icon"><i class="fa-solid fa-file-contract"></i></span>
+                        <span>Mes contrats</span>
+                    </span>
+                </a></li>
+                <li><a href="{% url 'inventaire:cartographie_site' %}" class="{{ actif|bulma_menu_actif:'carto' }}has-icon">
+                    <span class="icon-text">
+                        <span class="icon"><i class="fa-solid fa-compass-drafting"></i></span>
+                        <span>Cartographie sites</span>
+                    </span>
+                </a></li>
+                {% if user.is_staff %}
+                <li><a href="{% url 'admin:index' %}" class="{{ actif|bulma_menu_actif:'admin' }}has-icon">
+                    <span class="icon-text">
+                        <span class="icon"><i class="fa-solid fa-user-gear"></i></span>
+                        <span>Accès gérant</span>
+                    </span>
+                </a></li>
+                <li><a href="{% url 'inventaire:import_excel' %}" class="{{ actif|bulma_menu_actif:'import' }}has-icon">
+                    <span class="icon-text">
+                        <span class="icon"><i class="fa-solid fa-file-excel"></i></span>
+                        <span>Import excel</span>
+                    </span>
+                </a></li>
+                {% endif %}
+                <li><a href="{% url 'inventaire:compte' %}" class="{{ actif|bulma_menu_actif:'compte' }}has-icon">
+                    <span class="icon-text">
+                        <span class="icon"><i class="fa-solid fa-user"></i></span>
+                        <span>Mon compte</span>
+                    </span>
+                </a></li>
+                <li><a href="{% get_mailto_contact %}" class="{{ actif|bulma_menu_actif:'mail' }}has-icon">
+                    <span class="icon-text">
+                        <span class="icon"><i class="fa-solid fa-paper-plane"></i></span>
+                        <span>Contact BSSI</span>
+                    </span>
+                </a></li>
+            </ul>
+        </div>
+    </aside>
+
+    {# le contenu de la page #}
+    <section class="section is-main-section">
+        {% block contenu_principal %}
+        {% endblock %}
+    </section>
+</div>
+</body>
+
+{# les scripts qui agissent sur le DOM #}
+<script type="text/javascript" src="{% static 'inventaire/base.js' %}"></script>
+{% block extra_script %}
+{% endblock %}
+</html>

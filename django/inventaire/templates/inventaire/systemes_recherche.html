@@ -1,0 +1,122 @@
+{% extends 'inventaire/base.html' %}
+
+{% load static %}
+{% load inventaire_extras %}
+
+{% block titre %}
+<title>OASIS - Recherche S2I</title>
+{% endblock %}
+
+{% block contenu_principal %}
+{# la barre du haut du contenu #}
+<div class="is-title-bar mb-6">
+    <div class="level">
+        <div class="level-left">
+            <div class="level-item">
+                <h1 class="title mt-2 mb-2">Mes systèmes industriels</h1>
+            </div>
+        </div>
+        <div class="level-right">
+            {% if droit_modification %}
+            <div class="level-item">
+                <a class="button is-info" href="{% url 'inventaire:systemes_creation' %}">
+                    <span class="icon"><i class="fa-solid fa-plus"></i></span>
+                    <span>Ajouter un système</span>
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{# les notifications #}
+{% include 'inventaire/_notifications.html' %}
+
+{# les filtres #}
+<div class="card">
+    <div class="card-header has-background-info-soft">
+        <p class="card-header-title">Filtres de recherche</p>
+    </div>
+    <div class="card-content">
+        <form id="form_recherche_get" action="{% url 'inventaire:systemes_recherche' %}" method="get">
+            {{ recherche_systemes_form }}
+            <div class="level">
+                <div class="level-left">
+                    <div class="level-item">
+                        <a class="button is-info is-soft" href="{% url 'inventaire:systemes_recherche' %}">
+                            <span class="icon"><i class="fa-solid fa-arrow-rotate-left"></i></span>
+                            <span>Réinitialiser les filtres</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="level-right">
+                    <div class="level-item">
+                        <button type="submit" class="button is-info">
+                            <span class="icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+                            <span>Rechercher</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{# les résultats #}
+<div class="card">
+    <div class="card-header has-background-info-soft">
+        <p class="card-header-title">Résultats</p>
+    </div>
+    <div class="card-content">
+        <div class="table-container">
+            {% if tous_sys_indus %}
+            <table class="table is-striped is-hoverable is-narrow is-fullwidth">
+                <thead>
+                <tr>
+                    <th><p class="mt-1 content is-small">USID</p></th>
+                    <th><p class="mt-1 content is-small">Ville</p></th>
+                    <th><p class="mt-1 content is-small">Nom</p></th>
+                    <th><p class="mt-1 content is-small">Domaine métier</p></th>
+                    <th><p class="mt-1 content is-small">Classe</p></th>
+                    <th><p class="mt-1 content is-small">Description</p></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for x in tous_sys_indus %}
+                <tr>
+                    <td><p class="mt-1 content is-small">{{ x.localisation.get_zone_usid_display }}</p></td>
+                    <td><p class="mt-1 content is-small">{{ x.localisation.nom_ville|title }}</p></td>
+                    <td><p class="mt-1 content is-small"><a href="{% url 'inventaire:systemes_details' x.id %}">{{ x.nom }}</a></p></td>
+                    <td><p class="mt-1 content is-small">{{ x.domaine_metier }}</p></td>
+                    <td><p class="mt-1 content is-small">{{ x.get_homologation_classe_display }}</p></td>
+                    <td><p class="mt-1 content is-small">{{ x.description|truncatechars:50 }}</p></td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="content">Pas de systèmes industriels enregistrés.</p>
+            {% endif %}
+        </div>
+        <nav class="pagination is-centered" role="navigation">
+            <ul class="pagination-list">
+                {% if page_obj.has_previous %}
+                <li><a class="pagination-link" href="?{% lien_pagination 1 %}">première page</a></li>
+                <li><a class="pagination-link" href="?{% lien_pagination page_obj.previous_page_number %}">&laquo; précédent</a></li>
+                {% endif %}
+                <li><a class="pagination-link is current">{{ page_obj.number }}</a></li>
+                {% if page_obj.has_next %}
+                <li><a class="pagination-link" href="?{% lien_pagination page_obj.next_page_number %}">suivant &raquo;</a></li>
+                <li><a class="pagination-link" href="?{% lien_pagination page_obj.paginator.num_pages %}">dernière page</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_script %}
+<script src="{% static 'inventaire/recherche_base.js' %}"></script>
+<script src="{% static 'inventaire/recherche_systemes.js' %}"></script>
+{% endblock %}
+

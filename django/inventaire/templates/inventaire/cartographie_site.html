@@ -1,0 +1,152 @@
+{% extends 'inventaire/base.html' %}
+
+{% load static %}
+{% load inventaire_extras %}
+
+{% block titre %}
+<title>OASIS - Cartographie Site</title>
+{% endblock %}
+
+{% block require_script %}
+{% if mode == 1 %}
+<script src="{% static 'inventaire/ext/go.js' %}"></script>
+{% elif mode == 0 %}
+<script src="{% static 'inventaire/ext/mermaid.js' %}"></script>
+<script>mermaid.initialize({ startOnLoad: true });</script>
+{% endif %}
+{% endblock %}
+
+{% block contenu_principal %}
+{# la barre du haut du contenu #}
+<div class="is-title-bar mb-6">
+    <div class="level">
+        <div class="level-left">
+            <div class="level-item">
+                <div class="content">
+                    <h1 class="title mt-2 mb-2">Cartographie de site</h1>
+                    {% if site_choisi %}
+                    <h2 class="subtitle mt-2 is-5">{{ site_choisi }}</h2>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# les notifications #}
+{% include 'inventaire/_notifications.html' %}
+
+{# les boites avec les éléments à renseigner #}
+<div class="box">
+    <form action="{% url 'inventaire:cartographie_site' %}" method="get">
+        <input id="id_page_vide" type="hidden" value="{{ page_vide }}">
+        <div class="level">
+            <div class="level-left">
+                <div class="level-item">
+                    <div class="field">
+                        {{ mon_form.usid|bulma_form_label }}
+                        <div class="select is-warning">
+                            {{ mon_form.usid }}
+                        </div>
+                    </div>
+                </div>
+                <div class="level-item">
+                    <div class="field">
+                        {{ mon_form.ville|bulma_form_label }}
+                        <div class="select is-warning">
+                            {{ mon_form.ville }}
+                        </div>
+                    </div>
+                </div>
+                <div class="level-item">
+                    <div class="field">
+                        {{ mon_form.quartier|bulma_form_label }}
+                        <div class="select is-warning">
+                            {{ mon_form.quartier }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="level">
+            <div class="level-left">
+                <div class="level-item">
+                    <div class="field">
+                        {{ mon_form.moteur|bulma_form_label }}
+                        <div class="select is-info">
+                            {{ mon_form.moteur }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="level-right">
+                <div class="level-item">
+                    <button type="submit" class="button is-info">
+                        <span class="icon"><i class="fa-solid fa-pencil"></i></span>
+                        <span>Cartographier</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% if dessin %}
+<div class="box">
+    <figure class="image">
+        {% if mode == 1 %}
+        <div id="myDiagramDiv" style="width:800px; height:450px; background-color: #DAE4E4;">
+        </div>
+        {% elif mode == 0 %}
+        <pre class="mermaid">
+            {{ dessin }}
+        </pre>
+        {% endif %}
+    </figure>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_script %}
+<script src="{% static 'inventaire/cartographie_site.js' %}"></script>
+{% if mode == 1 %}
+<script>
+    const diagram = new go.Diagram("myDiagramDiv");
+    diagram.nodeTemplate = new go.Node("Auto")
+        .add(
+            new go.Shape("RoundedRectangle", { fill: "white" })  // default Shape.fill value
+                .bind("fill", "color"),  // binding to get fill from nodedata.color
+            new go.TextBlock({ margin: 5 })
+                .bind("text")  // binding to get TextBlock.text from nodedata.text
+    );
+    diagram.groupTemplate = new go.Group("Auto")
+        .add(
+            new go.Panel("Auto")
+                .add(
+                    new go.Shape("RoundedRectangle", { fill: "white" }) // surrounds the Placeholder
+                        .bind("fill", "color"),
+                    new go.Placeholder({ padding: 20}), // represents the area of all member parts, with some extra padding around them
+                    new go.TextBlock({ alignment: go.Spot.Top, padding: 10, margin: 5 }) // group title
+                        .bind("text"),
+    ));
+    diagram.linkTemplate = // the whole link panel
+    new go.Link({
+            corner: 10,   // rounded corners
+            curve: go.Curve.Bezier,
+        })
+        .add(
+            new go.Shape(), // the link shape, default black stroke
+            new go.Shape({ toArrow: "OpenTriangle", fill: null }), // the arrowhead
+            new go.Shape({ fromArrow: "BackwardOpenTriangle", fill: null }), // the arrowhead
+            new go.Panel("Auto")
+                .add(
+                    new go.Shape("RoundedRectangle", { fill: "lightgray" }),
+                    new go.TextBlock().bind("text"), // this is a Link label
+                ),
+    );
+    {% autoescape off %}
+        diagram.model = go.Model.fromJson({{ dessin }});
+    {% endautoescape %}
+</script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,705 @@
+{% extends 'inventaire/base.html' %}
+
+{% load static %}
+{% load inventaire_extras %}
+
+{% block titre %}
+<title>OASIS - Modification S2I</title>
+{% endblock %}
+
+{% block require_script %}
+<script src="{% static 'inventaire/ext/jquery-3.7.1.min.js' %}"></script>
+<script src="{% static 'inventaire/ext/jquery.formset.js' %}"></script>
+{% endblock %}
+
+{% block contenu_principal %}
+<form id="id_html_form" method="post">
+    {% csrf_token %}
+
+    {# la barre du haut du contenu #}
+    <div class="is-title-bar mb-6">
+        <div class="level">
+            <div class="level-left">
+                <div class="level-item content">
+                    <h1 class="mt-2 mb-2">Système :</h1>
+                    <p class="ml-3 mt-auto mb-auto">{{ form.nom }}</p>
+                    {% if form.nom.errors %}
+                    {{ form.nom.errors }}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="level-right">
+                <div class="level-item">
+                    <div class="buttons">
+                        <button type="submit" class="button is-info">
+                            <span class="icon"><i class="fa-solid fa-floppy-disk"></i></span>
+                            <span>Enregistrer</span>
+                        </button>
+                        {% if mode == "modification" %}
+                        <a class="button is-info is-soft" href="{% url 'inventaire:systemes_details' object.pk %}">
+                            <span class="icon"><i class="fa-solid fa-ban"></i></span>
+                            <span>Annuler</span>
+                        </a>
+                        <a class="button is-danger is-soft"
+                           href="{% url 'inventaire:systemes_suppression' object.pk %}">
+                            <span class="icon"><i class="fa-solid fa-trash-can"></i></span>
+                            <span>Supprimer</span>
+                        </a>
+                        {% else %}
+                        <div class="level-item">
+                            <a class="button is-info is-soft" href="{% url 'inventaire:systemes_recherche' %}">
+                                <span class="icon"><i class="fa-solid fa-ban"></i></span>
+                                <span>Annuler</span>
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# les notifications #}
+    {% include 'inventaire/_notifications.html' %}
+
+    {# les cartes avec les éléments à renseigner #}
+    <div class="fixed-grid has-2-cols">
+        <div class="grid">
+            {# la localisation #}
+            <div class="cell is-col-span-2">
+                <div class="card">
+                    <div class="card-header has-background-info-soft">
+                        <p class="card-header-title">Localisation</p>
+                    </div>
+                    <div class="card-content grid">
+                        <div class="cell">
+                            <div class="field">
+                                {{ form.z_usid|bulma_form_label:'small' }}
+                                <div class="select is-warning is-small is-fullwidth">
+                                    {{ form.z_usid }}
+                                </div>
+                                {% if z_usid.errors %}
+                                {{ z_usid.errors }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="cell">
+                            <div class="field">
+                                {{ form.z_ville|bulma_form_label:'small' }}
+                                <div class="select is-warning is-small is-fullwidth">
+                                    {{ form.z_ville }}
+                                </div>
+                                {% if z_ville.errors %}
+                                {{ z_ville.errors }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="cell">
+                            <div class="field">
+                                {{ form.z_quartier|bulma_form_label:'small' }}
+                                <div class="select is-warning is-small is-fullwidth">
+                                    {{ form.z_quartier }}
+                                </div>
+                                {% if z_quartier.errors %}
+                                {{ z_quartier.errors }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="cell">
+                            <div class="field">
+                                {{ form.z_zone|bulma_form_label:'small' }}
+                                <div class="select is-warning is-small is-fullwidth">
+                                    {{ form.z_zone }}
+                                </div>
+                                {% if z_zone.errors %}
+                                {{ z_zone.errors }}
+                                {% endif %}
+                            </div>
+                         </div>
+                    </div>
+                </div>
+            </div>
+
+            {# les généralités #}
+            <div class="cell is-col-span-2">
+                <div class="card">
+                    <div class="card-header has-background-info-soft">
+                        <p class="card-header-title">Généralités</p>
+                    </div>
+                    <div class="card-content grid">
+                        <div class="cell">
+                            <div class="field">
+                                {{ form.environnement|bulma_form_label:'small'}}
+                                <div class="select is-warning is-small is-fullwidth">
+                                    {{ form.environnement }}
+                                </div>
+                                {% if form.environnement.errors %}
+                                {{ form.environnement.errors }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="cell">
+                            <div class="field">
+                                {{ form.domaine_metier|bulma_form_label:'small' }}
+                                <div class="select is-warning is-small is-fullwidth">
+                                    {{ form.domaine_metier }}
+                                </div>
+                                {% if form.domaine_metier.errors %}
+                                {{ form.domaine_metier.errors }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="cell">
+                            <div class="field">
+                                {{ form.fonctions_metiers|bulma_form_label:'small' }}
+                                <div class="select is-warning is-multiple is-small is-fullwidth">
+                                    {{ form.fonctions_metiers }}
+                                </div>
+                                {% if form.fonctions_metiers.errors %}
+                                {{ form.fonctions_metiers.errors }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="cell">
+                            <div class="field">
+                                {{ form.numero_gtp|bulma_form_label:'small' }}
+                                <div class="control">
+                                    {{ form.numero_gtp }}
+                                </div>
+                                {% if form.numero_gtp.errors %}
+                                {{ form.numero_gtp.errors }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="cell">
+                            <div class="field">
+                                {{ form.description|bulma_form_label:'small' }}
+                                <div class="control">
+                                    {{ form.description }}
+                                </div>
+                                {% if form.description.errors %}
+                                {{ form.description.errors }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# l'homologation #}
+            <div class="cell is-col-span-2">
+                <div class="card">
+                    <div class="card-header has-background-info-soft">
+                        <p class="card-header-title">Homologation</p>
+                    </div>
+                    <div class="card-content grid">
+                        <div class="cell">
+                            <div class="field">
+                                {{ form.homologation_classe|bulma_form_label:'small' }}
+                                <div class="select is-info is-small is-fullwidth">
+                                    {{ form.homologation_classe }}
+                                </div>
+                                {% if form.homologation_classe.errors %}
+                                {{ form.homologation_classe.errors }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="cell">
+                            <div class="field">
+                                {{ form.homologation_responsable|bulma_form_label:'small' }}
+                                <div class="select is-info is-small is-fullwidth">
+                                    {{ form.homologation_responsable }}
+                                </div>
+                                {% if form.homologation_responsable.errors %}
+                                {{ form.homologation_responsable.errors }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="cell">
+                            <div class="field">
+                                {{ form.homologation_fin|bulma_form_label:'small' }}
+                                <div class="control">
+                                    {{ form.homologation_fin }}
+                                </div>
+                                {% if form.homologation_fin.errors %}
+                                {{ form.homologation_fin.errors }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# la maintenance et les sauvegardes #}
+            <div class="cell">
+                <div class="card">
+                    <div class="card-header has-background-info-soft">
+                        <p class="card-header-title">Maintenance</p>
+                    </div>
+                    <div class="card-content grid">
+                        <div class="cell">
+                            <div class="field">
+                                {{ form.contrat_mcs|bulma_form_label:'small' }}
+                                <div class="select is-info is-small is-fullwidth">
+                                    {{ form.contrat_mcs }}
+                                </div>
+                                {% if form.contrat_mcs.errors %}
+                                {{ form.contrat_mcs.errors }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="cell">
+                            <div class="field">
+                                {{ form.date_maintenance|bulma_form_label:'small' }}
+                                <div class="control">
+                                    {{ form.date_maintenance }}
+                                </div>
+                                {% if form.date_maintenance.errors %}
+                                {{ form.date_maintenance.errors }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="cell">
+                <div class="card">
+                    <div class="card-header has-background-info-soft">
+                        <p class="card-header-title">Sauvegardes</p>
+                    </div>
+                    <div class="card-content grid">
+                        <div class="cell">
+                            <div class="field">
+                                {{ form.sauvegarde_config|bulma_form_label:'small' }}
+                                <div class="control">
+                                    {{ form.sauvegarde_config }}
+                                </div>
+                                {% if form.sauvegarde_config.errors %}
+                                {{ form.sauvegarde_config.errors }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="cell">
+                            <div class="field">
+                                {{ form.sauvegarde_donnees|bulma_form_label:'small' }}
+                                <div class="control">
+                                    {{ form.sauvegarde_donnees }}
+                                </div>
+                                {% if form.sauvegarde_donnees.errors %}
+                                {{ form.sauvegarde_donnees.errors }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="cell">
+                            <div class="field">
+                                {{ form.sauvegarde_comptes|bulma_form_label:'small' }}
+                                <div class="control">
+                                    {{ form.sauvegarde_comptes }}
+                                </div>
+                                {% if form.sauvegarde_comptes.errors %}
+                                {{ form.sauvegarde_comptes.errors }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# les interconnexions #}
+            <div class="cell is-col-span-2">
+                <div class="card">
+                    <div class="card-header has-background-info-soft">
+                        <p class="card-header-title">Interconnexions</p>
+                    </div>
+                    <div class="card-content">
+                        {{ interconnexions.management_form }}
+                        <div class="table-container">
+                            <table class="table is-striped is-hoverable is-narrow is-fullwidth">
+                                <thead>
+                                <tr>
+                                    <th><p class="mt-1 content is-small">Système lié</p></th>
+                                    <th><p class="mt-1 content is-small">Réseau</p></th>
+                                    <th><p class="mt-1 content is-small">Liaison</p></th>
+                                    <th><p class="mt-1 content is-small">Protocole</p></th>
+                                    <th><p class="mt-1 content is-small">Description</p></th>
+                                    <th class="has-text-centered"><span class="icon"><i
+                                            class="fa-solid fa-trash-can"></i></span></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for x in interconnexions.forms %}
+                                <tr class="interconnexions_formset_row">
+                                    {% for hidden in x.hidden_fields %}
+                                    {{ hidden }}
+                                    {% endfor %}
+                                    <td>
+                                        <div class="field">
+                                            <div class="select is-small is-info is-fullwidth">{{ x.systeme_to }}</div>
+                                            {% if x.systeme_to.errors %}
+                                            {{ x.systeme_to.errors }}
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="field">
+                                            <div class="select is-small is-info is-fullwidth">{{ x.type_reseau }}</div>
+                                            {% if x.type_reseau.errors %}
+                                            {{ x.type_reseau.errors }}
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="field">
+                                            <div class="select is-small is-info is-fullwidth">{{ x.type_liaison }}</div>
+                                            {% if x.type_liaison.errors %}
+                                            {{ x.type_liaison.errors }}
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="field">
+                                            <div class="control">{{ x.protocole }}</div>
+                                            {% if x.protocole.errors %}
+                                            {{ x.protocole.errors }}
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="field">
+                                            <div class="control">{{ x.description }}</div>
+                                            {% if x.description.errors %}
+                                            {{ x.description.errors }}
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td class="has-text-centered">{{ x.DELETE }}</td>
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# les ordinateurs et serveurs #}
+            <div class="cell is-col-span-2">
+                <div class="card">
+                    <div class="card-header has-background-info-soft">
+                        <p class="card-header-title">Ordinateurs et serveurs</p>
+                    </div>
+                    <div class="card-content">
+                        {{ ordis.management_form }}
+                        <div class="table-container">
+                            <table class="table is-striped is-hoverable is-narrow is-fullwidth">
+                                <thead>
+                                <tr>
+                                    <th><p class="mt-1 content is-small">Fonction Principale</p></th>
+                                    <th><p class="mt-1 content is-small">Marque</p></th>
+                                    <th><p class="mt-1 content is-small">Modele</p></th>
+                                    <th><p class="mt-1 content is-small">Nombre</p></th>
+                                    <th><p class="mt-1 content is-small">Famille OS</p></th>
+                                    <th><p class="mt-1 content is-small">Version OS</p></th>
+                                    <th><p class="mt-1 content is-small">Description</p></th>
+                                    <th class="has-text-centered"><span class="icon"><i
+                                            class="fa-solid fa-trash-can"></i></span></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for x in ordis.forms %}
+                                <tr class="ordis_formset_row">
+                                    {% for hidden in x.hidden_fields %}
+                                    {{ hidden }}
+                                    {% endfor %}
+                                    <td>
+                                        <div class="field">
+                                            <div class="select is-small is-info is-fullwidth">{{ x.fonction }}</div>
+                                            {% if x.fonction.errors %}
+                                            {{ x.fonction.errors }}
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="field">
+                                            <div class="control">{{ x.marque }}</div>
+                                            {% if x.marque.errors %}
+                                            {{ x.marque.errors }}
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="field">
+                                            <div class="control">{{ x.modele }}</div>
+                                            {% if x.modele.errors %}
+                                            {{ x.modele.errors }}
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="field">
+                                            <div class="control">{{ x.nombre }}</div>
+                                            {% if x.nombre.errors %}
+                                            {{ x.nombre.errors }}
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="field">
+                                            <div class="select is-small is-info is-fullwidth">{{ x.os_famille }}</div>
+                                            {% if x.os_famille.errors %}
+                                            {{ x.os_famille.errors }}
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="field">
+                                            <div class="control">{{ x.os_version }}</div>
+                                            {% if x.os_version.errors %}
+                                            {{ x.os_version.errors }}
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="field">
+                                            <div class="control">{{ x.description }}</div>
+                                            {% if x.description.errors %}
+                                            {{ x.description.errors }}
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td class="has-text-centered">{{ x.DELETE }}</td>
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# les matériels divers #}
+            <div class="cell is-col-span-2">
+                <div class="card">
+                    <div class="card-header has-background-info-soft">
+                        <p class="card-header-title">Matériels divers</p>
+                    </div>
+                    <div class="card-content">
+                        {{ effecteurs.management_form }}
+                        <div class="table-container">
+                            <table class="table is-striped is-hoverable is-narrow is-fullwidth">
+                                <thead>
+                                <tr>
+                                    <th><p class="mt-1 content is-small">Type</p></th>
+                                    <th><p class="mt-1 content is-small">Marque</p></th>
+                                    <th><p class="mt-1 content is-small">Modele</p></th>
+                                    <th><p class="mt-1 content is-small">Nombre</p></th>
+                                    <th><p class="mt-1 content is-small">N° firmware</p></th>
+                                    <th><p class="mt-1 content is-small">Code CORTEC</p></th>
+                                    <th><p class="mt-1 content is-small">Description</p></th>
+                                    <th class="has-text-centered"><span class="icon"><i
+                                            class="fa-solid fa-trash-can"></i></span></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for x in effecteurs.forms %}
+                                <tr class="effecteurs_formset_row">
+                                    {% for hidden in x.hidden_fields %}
+                                    {{ hidden }}
+                                    {% endfor %}
+                                    <td>
+                                        <div class="field">
+                                            <div class="select is-small is-info is-fullwidth">{{ x.type }}</div>
+                                            {% if x.type.errors %}
+                                            {{ x.type.errors }}
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="field">
+                                            <div class="control">{{ x.marque }}</div>
+                                            {% if x.marque.errors %}
+                                            {{ x.marque.errors }}
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="field">
+                                            <div class="control">{{ x.modele }}</div>
+                                            {% if x.modele.errors %}
+                                            {{ x.modele.errors }}
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="field">
+                                            <div class="control">{{ x.nombre }}</div>
+                                            {% if x.nombre.errors %}
+                                            {{ x.nombre.errors }}
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="field">
+                                            <div class="control">{{ x.firmware }}</div>
+                                            {% if x.firmware.errors %}
+                                            {{ x.firmware.errors }}
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="field">
+                                            <div class="control">{{ x.cortec }}</div>
+                                            {% if x.cortec.errors %}
+                                            {{ x.cortec.errors }}
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="field">
+                                            <div class="control">{{ x.description }}</div>
+                                            {% if x.description.errors %}
+                                            {{ x.description.errors }}
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td class="has-text-centered">{{ x.DELETE }}</td>
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# les licences de logiciels #}
+            <div class="cell is-col-span-2">
+                <div class="card">
+                    <div class="card-header has-background-info-soft">
+                        <p class="card-header-title">Licences de logiciels</p>
+                    </div>
+                    <div class="card-content">
+                        {{ licences.management_form }}
+                        <div class="table-container">
+                            <table class="table is-striped is-hoverable is-narrow is-fullwidth">
+                                <thead>
+                                <tr>
+                                    <th><p class="mt-1 content is-small">Editeur</p></th>
+                                    <th><p class="mt-1 content is-small">Logiciel</p></th>
+                                    <th><p class="mt-1 content is-small">Version</p></th>
+                                    <th><p class="mt-1 content is-small">Licence</p></th>
+                                    <th><p class="mt-1 content is-small">Date d'expiration</p></th>
+                                    <th><p class="mt-1 content is-small">Description</p></th>
+                                    <th class="has-text-centered"><span class="icon"><i
+                                            class="fa-solid fa-trash-can"></i></span></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for x in licences.forms %}
+                                <tr class="licences_formset_row">
+                                    {% for hidden in x.hidden_fields %}
+                                    {{ hidden }}
+                                    {% endfor %}
+                                    <td>
+                                        <div class="field">
+                                            <div class="control">{{ x.editeur }}</div>
+                                            {% if x.editeur.errors %}
+                                            {{ x.editeur.errors }}
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="field">
+                                            <div class="control">{{ x.logiciel }}</div>
+                                            {% if x.logiciel.errors %}
+                                            {{ x.logiciel.errors }}
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="field">
+                                            <div class="control">{{ x.version }}</div>
+                                            {% if x.version.errors %}
+                                            {{ x.version.errors }}
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="field">
+                                            <div class="control">{{ x.licence }}</div>
+                                            {% if x.license.errors %}
+                                            {{ x.license.errors }}
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="field">
+                                            <div class="control">{{ x.date_fin }}</div>
+                                            {% if x.date_fin.errors %}
+                                            {{ x.date_fin.errors }}
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="field">
+                                            <div class="control">{{ x.description }}</div>
+                                            {% if x.description.errors %}
+                                            {{ x.description.errors }}
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td class="has-text-centered">{{ x.DELETE }}</td>
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block extra_script %}
+<script type="text/javascript">
+const mode = "{{ mode }}";
+</script>
+<script src="{% static 'inventaire/modification_systemes.js' %}"></script>
+<script type="text/javascript">
+$('.interconnexions_formset_row').formset({
+    prefix: 'systeme_from',
+    addText: 'Ajouter une interconnexion',
+    addCssClass: 'button is-info is-soft is-small',
+    deleteText: 'Supprimer',
+    deleteCssClass: 'delete mt-1',
+});
+$('.ordis_formset_row').formset({
+    prefix: 'materiels_it',
+    addText: 'Ajouter un ordinateur',
+    addCssClass: 'button is-info is-soft is-small',
+    deleteText: 'Supprimer',
+    deleteCssClass: 'delete mt-1',
+});
+$('.effecteurs_formset_row').formset({
+    prefix: 'materiels_ot',
+    addText: 'Ajouter un matériel',
+    addCssClass: 'button is-info is-soft is-small',
+    deleteText: 'Supprimer',
+    deleteCssClass: 'delete mt-1',
+});
+$('.licences_formset_row').formset({
+    prefix: 'licences',
+    addText: 'Ajouter une licence',
+    addCssClass: 'button is-info is-soft is-small',
+    deleteText: 'Supprimer',
+    deleteCssClass: 'delete mt-1',
+});
+// clique sur les boutons (pas de fou compatible avec les erreurs de formulaire)
+//$(".interconnexions_formset_row").last().children().last().children().click()
+//$(".ordis_formset_row").last().children().last().children().click()
+//$(".effecteurs_formset_row").last().children().last().children().click()
+//$(".licences_formset_row").last().children().last().children().click()
+</script>
+{% endblock %}

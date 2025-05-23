@@ -1,0 +1,79 @@
+# Docker-compose d'OASIS en production
+
+services:
+
+  # le serveur web django
+  django:
+    image: ghcr.io/spystrach/oasis_poc-django:edge
+    build:
+      dockerfile: ./Dockerfile.prod
+      context: ./django
+    command: gunicorn oasis.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - oasis_prod_static:/home/app/staticfiles
+      - oasis_prod_tempo:/home/app/tempo
+    expose:
+      - "8000"
+    env_file:
+      - ./env/stack.prod.env
+    depends_on:
+      - postgres
+      - celery
+
+  # la base de donnée
+  postgres:
+    image: ghcr.io/spystrach/oasis_poc-postgres:edge
+    build:
+      dockerfile: ./Dockerfile
+      context: ./postgres
+    volumes:
+      - oasis_prod_postgres:/var/lib/postgresql/data
+    env_file:
+      - ./env/stack.prod.env
+
+  # le serveur web de reverse proxy
+  nginx:
+    image: ghcr.io/spystrach/oasis_poc-nginx:edge
+    build:
+      dockerfile: ./Dockerfile
+      context: ./nginx
+    volumes:
+      - oasis_prod_static:/home/app/staticfiles
+    ports:
+      - "80:80"
+    depends_on:
+      - django
+
+  # le cache key=value
+  redis:
+    image: ghcr.io/spystrach/oasis_poc-redis:edge
+    build:
+      dockerfile: ./Dockerfile
+      context: ./redis
+    command: /bin/sh -c "redis-server /default-redis.conf --requirepass $$REDIS_PASSWORD"
+    volumes:
+      - oasis_prod_redis:/data
+    env_file:
+      - ./env/stack.prod.env
+
+  # la file de tâches
+  celery:
+    image: ghcr.io/spystrach/oasis_poc-celery:edge
+    build:
+      dockerfile: ./Dockerfile.celery
+      context: ./django
+    command: celery --app oasis worker
+    env_file:
+      - ./env/stack.prod.env
+    depends_on:
+      - redis
+
+volumes:
+  # le support de la base de donnée
+  oasis_prod_postgres:
+  # le support du cache key=value
+  oasis_prod_redis:
+  # les fichiers statiques du site
+  oasis_prod_static:
+  # plateforme d'échange entre le conteneur et l'hôte
+  oasis_prod_tempo:

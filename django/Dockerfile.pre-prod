@@ -1,0 +1,26 @@
+FROM python:3.11-alpine
+
+# installation des dépendances
+RUN apk add --update netcat-openbsd
+
+# variables d'environnement
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+WORKDIR /usr/src/app
+
+# installation des dépendances python
+COPY ./requirements.txt .
+RUN pip install -r requirements.txt
+
+# paramétrage de l'entrypoint
+COPY ./entrypoint.pre-prod.sh .
+RUN sed -i 's/\r$//g' entrypoint.pre-prod.sh
+RUN chmod +x entrypoint.pre-prod.sh
+
+# copie des fichiers
+COPY ./manage.py .
+COPY ./oasis/ oasis/
+COPY ./inventaire/ inventaire/
+
+ENTRYPOINT ["/usr/src/app/entrypoint.pre-prod.sh"]

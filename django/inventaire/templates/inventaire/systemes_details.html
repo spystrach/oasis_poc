@@ -1,0 +1,433 @@
+{% extends 'inventaire/base.html' %}
+
+{% load static %}
+{% load inventaire_extras %}
+
+{% block titre %}
+<title>OASIS - Détails S2I</title>
+{% endblock %}
+
+{% block contenu_principal %}
+{# la barre du haut du contenu #}
+<div class="is-title-bar mb-6">
+    <div class="level">
+        <div class="level-left">
+            <div class="level-item">
+                <div class="content">
+                    <h1 class="title mt-2 mb-2">Système : {{ systeme.nom }}</h1>
+                    <p>Modifié le {{ systeme.fiche_date|format_date_court }} par {{ systeme.fiche_utilisateur.get_full_name }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="level-right">
+            <div class="level-item">
+                <div class="criticite">
+                    <p id="p_criticite" class="nombre_cercle"><span>{{ systeme.criticite }}</span></p>
+                    <p class="tooltip heading">Criticité du S2I</p>
+                </div>
+            </div>
+            <div class="level-item">
+                <div class="buttons">
+                    {% if droit_modification %}
+                    <a class="button is-info" href="{% url 'inventaire:systemes_modification' systeme.pk %}">
+                        <span class="icon"><i class="fa-solid fa-pen-to-square"></i></span>
+                        <span>Modifier</span>
+                    </a>
+                    {% endif %}
+                    <a class="button is-info is-soft" href="" disabled>
+                        <span class="icon"><i class="fa-solid fa-file-export"></i></span>
+                        <span>Exporter</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# les notifications #}
+{% include 'inventaire/_notifications.html' %}
+
+{# les cartes avec les éléments à renseigner #}
+<div class="fixed-grid has-2-cols">
+    <div class="grid">
+        {# la localisation #}
+        <div class="cell is-col-span-2">
+            <div class="card">
+                <div class=" card-header has-background-info-soft">
+                    <p class="card-header-title">Localisation</p>
+                </div>
+                <div class="card-content grid">
+                    <div class="cell">
+                        <div class="content">
+                            <p class="heading">USID</p>
+                            <p>{{ systeme.localisation.get_zone_usid_display }}</p>
+                        </div>
+                    </div>
+                    <div class="cell">
+                        <div class="content">
+                            <p class="heading">Ville</p>
+                            <p>{{ systeme.localisation.nom_ville|nom_ville_humain }}</p>
+                        </div>
+                    </div>
+                    <div class="cell">
+                        <div class="content">
+                            <p class="heading">Quartier</p>
+                            <p>{{ systeme.localisation.nom_quartier }}</p>
+                        </div>
+                    </div>
+                    {% if systeme.localisation.zone_quartier %}
+                    <div class="cell">
+                        <div class="content">
+                            <p class="heading">Sous-zone</p>
+                            <p>{{ systeme.localisation.zone_quartier }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="cell">
+                        <div class="content">
+                            <p class="heading">Sensibilité</p>
+                            <p>{{ systeme.localisation.get_sensibilite_display }}</p>
+                        </div>
+                    </div>
+                    <div class="cell">
+                        <div class="content">
+                            <p class="heading">Protection</p>
+                            <p>{{ systeme.localisation.get_protection_display }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# les généralités #}
+        <div class="cell is-col-span-2">
+            <div class="card">
+                <div class=" card-header has-background-info-soft">
+                    <p class="card-header-title">Généralités</p>
+                </div>
+                <div class="card-content grid">
+                    <div class="cell">
+                        <div class="content">
+                            <p class="heading">Environnement</p>
+                            <p>{{ systeme.get_environnement_display }}</p>
+                        </div>
+                    </div>
+                    <div class="cell">
+                        <div class="content">
+                            <p class="heading">Domaine métier</p>
+                            <p>{{ systeme.domaine_metier }}</p>
+                        </div>
+                    </div>
+                    <div class="cell">
+                        <div class="content">
+                            <p class="heading">Fonctions du domaine métier</p>
+                            <ul>
+                                {% for fonction in systeme.fonctions_metiers.all %}
+                                <li>{{ fonction.nom }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="cell">
+                        <div class="content">
+                            <p class="heading">Numéro GTP</p>
+                            <p>{{ systeme.numero_gtp }}</p>
+                        </div>
+                    </div>
+                    <div class="cell">
+                        <div class="content">
+                            <p class="heading">Description</p>
+                            <p>{{ systeme.description }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# l'homologation #}
+        <div class="cell is-col-span-2">
+            <div class="card">
+                <div class=" card-header has-background-info-soft">
+                    <p class="card-header-title">Homologation</p>
+                </div>
+                <div class="card-content grid">
+                    {% if systeme.homologation_classe != 99 %}
+                    <div class="cell">
+                        <div class="content">
+                            <p class="heading">Classe</p>
+                            <p>{{ systeme.get_homologation_classe_display }}</p>
+                        </div>
+                    </div>
+                    <div class="cell">
+                        <div class="content">
+                            <p class="heading">Responsable</p>
+                            <p>{{ systeme.get_homologation_responsable_display }}</p>
+                        </div>
+                    </div>
+                    <div class="cell">
+                        <div class="content">
+                            <p class="heading">Date de fin</p>
+                            <p>{{ systeme.homologation_fin|format_date_long }}</p>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="cell">
+                        <div class="content">
+                            <p class="has-text-danger">Le système n'est pas homologué !</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {# la maintenance et les sauvegardes #}
+        <div class="cell">
+            <div class="card">
+                <div class=" card-header has-background-info-soft">
+                    <p class="card-header-title">Maintenance</p>
+                </div>
+                <div class="card-content grid">
+                    {% if systeme.contrat_mcs %}
+                    <div class="cell">
+                        <div class="content">
+                            <p class="heading">N° du marché</p>
+                            <p>{{ systeme.contrat_mcs.numero_marche }}</p>
+                        </div>
+                    </div>
+                    <div class="cell">
+                        <div class="content">
+                            <p class="heading">Entreprise</p>
+                            <p>{{ systeme.contrat_mcs.nom_societe }}</p>
+                        </div>
+                    </div>
+                    <div class="cell">
+                        <div class="content">
+                            <p class="heading">Dernière intervention</p>
+                            <p>{{ systeme.date_maintenance|format_date_long }}</p>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="cell">
+                        <div class="content">
+                            <p class="has-text-danger">Pas de marché de maintenance associé !</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="cell">
+            <div class="card">
+                <div class=" card-header has-background-info-soft">
+                    <p class="card-header-title">Sauvegardes</p>
+                </div>
+                <div class="card-content grid">
+                    {% if systeme.sauvegarde_config or systeme.sauvegarde_donnees or systeme.sauvegarde_comptes %}
+                    <div class="cell">
+                        <div class="content">
+                            <p class="heading">Configurations</p>
+                            <p>{{ systeme.sauvegarde_config|format_date_long }}</p>
+                        </div>
+                    </div>
+                    <div class="cell">
+                        <div class="content">
+                            <p class="heading">Données</p>
+                            <p>{{ systeme.sauvegarde_donnees|format_date_long }}</p>
+                        </div>
+                    </div>
+                    <div class="cell">
+                        <div class="content">
+                            <p class="heading">Comptes</p>
+                            <p>{{ systeme.sauvegarde_comptes|format_date_long }}</p>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="cell">
+                        <div class="content">
+                            <p class="has-text-danger">Aucune sauvegarde n'est effectuée !</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {# les interconnexions #}
+        {% if interconnexions %}
+        <div class="cell is-col-span-2">
+            <div class="card">
+                <div class=" card-header has-background-info-soft">
+                    <p class="card-header-title">Interconnexions</p>
+                </div>
+                <div class="card-content">
+                    <div class="table-container">
+                        <table class="table is-striped is-hoverable is-narrow is-fullwidth">
+                            <thead>
+                            <tr>
+                                <th><p class="mt-1 content is-small">Système lié</p></th>
+                                <th><p class="mt-1 content is-small">Réseau</p></th>
+                                <th><p class="mt-1 content is-small">Liaison</p></th>
+                                <th><p class="mt-1 content is-small">Protocole</p></th>
+                                <th><p class="mt-1 content is-small">Description</p></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for x in interconnexions %}
+                            <tr>
+                                <td><a href="{% url 'inventaire:systemes_details' x.systeme_to.id %}">{{ x.systeme_to.nom }}</a></td>
+                                <td>{{ x.get_type_reseau_display }}</td>
+                                <td>{{ x.get_type_liaison_display }}</td>
+                                <td>{{ x.protocole }}</td>
+                                <td>{{ x.description }}</td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {# les ordinateurs et serveurs #}
+        {% if ordis %}
+        <div class="cell is-col-span-2">
+            <div class="card">
+                <div class=" card-header has-background-info-soft">
+                    <p class="card-header-title">Ordinateurs et serveurs</p>
+                </div>
+                <div class="card-content">
+                    <div class="table-container">
+                        <table class="table is-striped is-hoverable is-narrow is-fullwidth">
+                            <thead>
+                            <tr>
+                                <th><p class="mt-1 content is-small">Fonction Principale</p></th>
+                                <th><p class="mt-1 content is-small">Marque</p></th>
+                                <th><p class="mt-1 content is-small">Modele</p></th>
+                                <th><p class="mt-1 content is-small">Nombre</p></th>
+                                <th><p class="mt-1 content is-small">Famille OS</p></th>
+                                <th><p class="mt-1 content is-small">Version OS</p></th>
+                                <th><p class="mt-1 content is-small">Description</p></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for x in ordis %}
+                            <tr>
+                                <td>{{ x.get_fonction_display }}</td>
+                                <td>{{ x.marque }}</td>
+                                <td>{{ x.modele }}</td>
+                                <td>{{ x.nombre }}</td>
+                                <td>{{ x.get_os_famille_display }}</td>
+                                <td>{{ x.os_version }}</td>
+                                <td>{{ x.description }}</td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {# les matériels divers #}
+        {% if effecteurs %}
+        <div class="cell is-col-span-2">
+            <div class="card">
+                <div class=" card-header has-background-info-soft">
+                    <p class="card-header-title">Matériels divers</p>
+                </div>
+                <div class="card-content">
+                    <div class="table-container">
+                        <table class="table is-striped is-hoverable is-narrow is-fullwidth">
+                            <thead>
+                            <tr>
+                                <th><p class="mt-1 content is-small">Type</p></th>
+                                <th><p class="mt-1 content is-small">Marque</p></th>
+                                <th><p class="mt-1 content is-small">Modele</p></th>
+                                <th><p class="mt-1 content is-small">Nombre</p></th>
+                                <th><p class="mt-1 content is-small">N° firmware</p></th>
+                                <th><p class="mt-1 content is-small">Code CORTEC</p></th>
+                                <th><p class="mt-1 content is-small">Description</p></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for x in effecteurs %}
+                            <tr>
+                                <td>{{ x.get_type_display }}</td>
+                                <td>{{ x.marque }}</td>
+                                <td>{{ x.modele }}</td>
+                                <td>{{ x.nombre }}</td>
+                                <td>{{ x.firmware }}</td>
+                                <td>{{ x.cortec }}</td>
+                                <td>{{ x.description }}</td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {# les licences de logiciels #}
+        {% if licences %}
+        <div class="cell is-col-span-2">
+            <div class="card">
+                <div class=" card-header has-background-info-soft">
+                    <p class="card-header-title">Licences de logiciels</p>
+                </div>
+                <div class="card-content">
+                    <div class="table-container">
+                        <table class="table is-striped is-hoverable is-narrow is-fullwidth">
+                            <thead>
+                            <tr>
+                                <th><p class="mt-1 content is-small">Editeur</p></th>
+                                <th><p class="mt-1 content is-small">Logiciel</p></th>
+                                <th><p class="mt-1 content is-small">Version</p></th>
+                                <th><p class="mt-1 content is-small">Licence</p></th>
+                                <th><p class="mt-1 content is-small">Date d'expiration</p></th>
+                                <th><p class="mt-1 content is-small">Description</p></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for x in licences %}
+                            <tr>
+                                <td>{{ x.editeur }}</td>
+                                <td>{{ x.logiciel }}</td>
+                                <td>{{ x.version }}</td>
+                                <td>{{ x.licence }}</td>
+                                <td>{{ x.date_fin|format_date_court }}</td>
+                                <td>{{ x.description }}</td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_script %}
+<script>
+    var cercle = document.getElementById("p_criticite");
+    // les couleurs vont du vert au rouge, c'est-à-dire en codification HSL du 100 (vert) au 0 (rouge)
+    // pour passer de l'intervalle de [a,b] au [c,d], on utilise la fonction
+    // f(t) = c + ((d-c)/(b-a))*(t-a)
+    // intervalle de criticité actuelle est de 0 à 100
+    int_a = 0;
+    int_b = 70;
+    int_c = 0;
+    int_d = 100;
+    int_t =  int_c + ((int_d-int_c)/(int_b-int_a))*({{ systeme.criticite }}-int_a)
+    h_value = Math.max(0, 100 - int_t); // inversion de la valeur
+    cercle.style.backgroundColor = "hsl("+h_value+", 90%, 50%)";
+</script>
+{% endblock %}
+

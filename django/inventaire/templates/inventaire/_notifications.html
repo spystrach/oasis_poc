@@ -1,0 +1,10 @@
+{% load inventaire_extras %}
+
+{% if messages %}
+{% for message in messages %}
+<div class="notification {{ message.tags|bulma_message_tag_couleur }}">
+    <button type="button" class="delete" onclick="cache_notif(this)"></button>
+    {{ message }}
+</div>
+{% endfor %}
+{% endif %}

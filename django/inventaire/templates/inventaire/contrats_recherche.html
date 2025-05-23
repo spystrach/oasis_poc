@@ -1,0 +1,123 @@
+{% extends 'inventaire/base.html' %}
+
+{% load static %}
+{% load inventaire_extras %}
+
+{% block titre %}
+<title>OASIS - Recherche contrats</title>
+{% endblock %}
+
+{% block contenu_principal %}
+{# la barre du haut du contenu #}
+<div class="is-title-bar mb-6">
+    <div class="level">
+        <div class="level-left">
+            <div class="level-item">
+                <h1 class="title mt-2 mb-2">Mes contrats de maintenance</h1>
+            </div>
+        </div>
+        <div class="level-right">
+            {% if droit_modification %}
+            <div class="level-item">
+                <a class="button is-info" href="{% url 'inventaire:contrats_creation' %}">
+                    <span class="icon"><i class="fa-solid fa-plus"></i></span>
+                    <span>Ajouter un contrat</span>
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{# les notifications #}
+{% include 'inventaire/_notifications.html' %}
+
+{# les filtres #}
+<div class="card">
+    <div class="card-header has-background-info-soft">
+        <p class="card-header-title">Filtres</p>
+    </div>
+    <div class="card-content">
+        <form id="form_recherche_get" action="{% url 'inventaire:contrats_recherche' %}" method="get">
+            {{ recherche_contrats_form }}
+            <div class="level">
+                <div class="level-left">
+                    <div class="level-item">
+                        <a class="button is-info is-soft" href="{% url 'inventaire:contrats_recherche' %}">
+                            <span class="icon"><i class="fa-solid fa-arrow-rotate-left"></i></span>
+                            <span>Réinitialiser les filtres</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="level-right">
+                    <div class="level-item">
+                        <button type="submit" class="button is-info">
+                            <span class="icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+                            <span>Rechercher</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{# les résultats #}
+<div class="card">
+    <div class="card-header has-background-info-soft">
+        <p class="card-header-title">Résultats</p>
+    </div>
+    <div class="card-content">
+        <div class="table-container">
+            {% if tous_contrats %}
+            <table class="table is-striped is-hoverable is-narrow is-fullwidth">
+                <thead>
+                <tr>
+                    <th><p class="mt-1 content is-small">USID</p></th>
+                    <th><p class="mt-1 content is-small">N° marché</p></th>
+                    <th><p class="mt-1 content is-small">Entreprise</p></th>
+                    <th><p class="mt-1 content is-small">Actif</p></th>
+                    <th><p class="mt-1 content is-small">Description</p></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for x in tous_contrats %}
+                <tr>
+                    <td><p class="mt-1 content is-small">{{ x.get_zone_usid_display }}</p></td>
+                    <td><p class="mt-1 content is-small"><a href="{% url 'inventaire:contrats_details' x.id %}">{{ x.numero_marche }}</a></p></td>
+                    <td><p class="mt-1 content is-small">{{ x.nom_societe }}</p></td>
+                    {% if x.est_actif %}
+                    <td><span class="icon has-text-success"><i class="fa-solid fa-circle-check"></i></span></td>
+                    {% else %}
+                    <td><span class="icon has-text-danger"><i class="fa-solid fa-circle-xmark"></i></span></td>
+                    {% endif %}
+                    <td><p class="mt-1 content is-small">{{ x.description|truncatechars:50 }}</p></td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="content">Pas de contrats enregistrés.</p>
+            {% endif %}
+        </div>
+        <nav class="pagination is-centered" role="navigation">
+            <ul class="pagination-list">
+                {% if page_obj.has_previous %}
+                <li><a class="pagination-link" href="?{% lien_pagination 1 %}">première page</a></li>
+                <li><a class="pagination-link" href="?{% lien_pagination page_obj.previous_page_number %}">&laquo; précédent</a></li>
+                {% endif %}
+                <li><a class="pagination-link is current">{{ page_obj.number }}</a></li>
+                {% if page_obj.has_next %}
+                <li><a class="pagination-link" href="?{% lien_pagination page_obj.next_page_number %}">suivant &raquo;</a></li>
+                <li><a class="pagination-link" href="?{% lien_pagination page_obj.paginator.num_pages %}">dernière page</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_script %}
+<script src="{% static 'inventaire/recherche_base.js' %}"></script>
+<script src="{% static 'inventaire/recherche_contrats.js' %}"></script>
+{% endblock %}

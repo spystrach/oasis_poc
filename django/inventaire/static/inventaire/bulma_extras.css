@@ -1,0 +1,312 @@
+/* --------------------------- */
+/*  Add-on du framework BULMA  */
+/* --------------------------- */
+
+/* --------------------------- */
+/* les boutons (ou liens) désactivés */
+.button[disabled] {
+  pointer-events: none;
+}
+
+/* --------------------------- */
+/* la navbar */
+.navbar-menu, .navbar-brand {
+  box-shadow: 0 1px 0 hsl(var(--bulma-text-h), var(--bulma-text-s),var(--bulma-border-l));
+}
+#id_theme_toggle {
+  margin-left: 0.75rem;
+}
+.navbar-link {
+  padding-right: 1.5rem;
+  padding-left: 1.5rem;
+}
+#form-logout {
+  margin-left: auto;
+  margin-right: auto;
+}
+#form-logout .buttons {
+  justify-content: center;
+}
+
+/* affichage pour les mobiles */
+@media screen and (max-width: 1023px) {
+  .navbar {
+    display: flex;
+    padding-right: 0;
+  }
+  .navbar-brand {
+    flex: 1;
+  }
+  .navbar-brand.is-right {
+    flex: none;
+  }
+  .navbar-menu {
+    position: absolute;
+    width: 100vw;
+    padding-top: 0;
+    top: 3.25rem;
+    left: 0;
+  }
+  #form-logout .buttons {
+    justify-content: flex-start;
+  }
+}
+
+/* --------------------------- */
+/* le aside (barre latérale gauche) */
+.aside {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 40;
+  height: 100vh;
+  padding: 0;
+  box-shadow: 1px 0 0 hsl(var(--bulma-text-h), var(--bulma-text-s),var(--bulma-border-l));
+}
+/* affichage pour les grands écrans */
+@media screen and (min-width: 1024px) {
+  html.has-aside-left.has-aside-expanded nav.navbar, html.has-aside-left.has-aside-expanded body {
+    padding-left: 14rem;
+  }
+  html.has-aside-left nav.navbar, html.has-aside-left body {
+    transition: padding-left 250ms ease-in-out 50ms;
+  }
+  html.has-aside-left aside.is-placed-left {
+    display: block;
+  }
+  aside.aside.is-expanded {
+    width: 14rem;
+  }
+  aside.aside.is-expanded .menu-list .icon {
+    width: 3rem;
+  }
+  aside.aside.is-expanded .menu-list span.menu-item-label {
+    display: inline-block;
+  }
+  aside.aside.is-expanded .menu-list li.is-active ul {
+    display: block;
+  }
+}
+/* affichage pour les mobiles */
+@media screen and (max-width: 1023px) {
+  #app, nav.navbar {
+    transition: margin-left 250ms ease-in-out 50ms;
+  }
+  aside.aside {
+    transition: left 250ms ease-in-out 50ms;
+  }
+  html.has-aside-mobile-transition body {
+    overflow-x: hidden;
+  }
+  html.has-aside-mobile-transition body, html.has-aside-mobile-transition #app, html.has-aside-mobile-transition nav.navbar {
+    width: 100vw;
+  }
+  html.has-aside-mobile-transition aside.aside {
+    width: 15rem;
+    display: block;
+    left: -15rem;
+  }
+  html.has-aside-mobile-transition aside.aside .image img {
+    max-width: 4.95rem;
+  }
+  html.has-aside-mobile-transition aside.aside .menu-list li.is-active ul {
+    display: block;
+  }
+  html.has-aside-mobile-transition aside.aside .menu-list a .icon {
+    width: 3rem;
+  }
+  html.has-aside-mobile-transition aside.aside .menu-list a span.menu-item-label {
+    display: inline-block;
+  }
+
+  html.has-aside-mobile-expanded #app, html.has-aside-mobile-expanded nav.navbar {
+    margin-left: 15rem;
+  }
+  html.has-aside-mobile-expanded aside.aside {
+    left: 0;
+  }
+}
+
+/* Pour des sous menus dans le aside
+NON UTILISE POUR L'INSTANT DANS LE CODE */
+.menu-list li a.has-dropdown-icon {
+  position: relative;
+  padding-right: 3rem;
+}
+.menu-list li a.has-dropdown-icon .dropdown-icon {
+  position: absolute;
+  top: 0.5rem;
+  right: 0;
+}
+.menu-list li ul {
+  display: none;
+  border-left: 0;
+  padding-left: 0;
+  margin: 0 0 0.75rem;
+}
+.menu-list li ul li a {
+  padding: 0.75rem 0 0.75rem 0.75rem;
+  font-size: 0.95rem;
+}
+.menu-list li ul li a.has-icon {
+  padding-left: 0;
+}
+.menu-list li ul li a.is-active:not(:hover) {
+  background: transparent;
+}
+/* un titre dans les menus dans les menus
+NON UTILISE POUR L'INSTANT DANS LE CODE */
+.menu-label {
+  padding: 0 0.75rem;
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+/* --------------------------- */
+/* le footer */
+.footer {
+  min-height: 3rem;
+  padding: 0.5rem 1rem 0 1rem;
+}
+
+/* --------------------------- */
+/* la section principale de la page */
+
+#app {
+  background-color: var(--bulma-scheme-main-ter);
+}
+
+.is-main-section {
+  padding: 1.5rem;
+  min-height: calc(100vh - var(--bulma-navbar-height) - 0rem);
+  /* permet de mettre footer en bas si pas assez de contenu */
+  /* taille de l'écran - taille navbar - taille footer */
+}
+
+.heading {
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* --------------------------- */
+/* le layout sous forme de grilles */
+.grid {
+  --bulma-grid-column-min: 8rem
+  /* permet d'avoir un affichage complet de la largeur sur smartphone */
+}
+
+/* --------------------------- */
+/* les éléments card */
+.card {
+  height: 100%;
+}
+/*.card-header {
+  background-color: hsl(var(--bulma-info-h), var(--bulma-info-s), var(--bulma-scheme-main-ter-l));
+}*/
+.card-content {
+  padding: 1rem;
+}
+
+/* --------------------------- */
+/* les erreurs des formulaires */
+.errorlist {
+  color: var(--bulma-danger);
+}
+
+/* --------------------------- */
+/* le bouton de suppression des formulaires (dans les tableaux) */
+a.delete {
+  color: transparent;
+}
+
+/* --------------------------- */
+/* les collapsibles customs */
+.checkbox-tab {
+  position: absolute;
+  opacity: 0;
+  z-index: -1;
+}
+
+.collapsible-accordion {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 5px;
+  overflow: hidden;
+  box-shadow: 0 .4rem .4rem -.2rem rgba(0, 0, 0, 0.5);
+}
+.collapsible-item-label {
+  display: flex;
+  justify-content: space-between;
+  padding: 1.4rem;
+  font-weight: bold;
+  cursor: pointer;
+  /*background-color: hsl(var(--bulma-info-h), var(--bulma-info-s), var(--bulma-info-light-l));*/
+}
+.collapsible-item-label::after {
+  content: "\2192";
+  width: 1em;
+  height: 1em;
+  text-align: center;
+  transition: all 0.35s;
+}
+.collapsible-item-content {
+  max-height: 0;
+  padding: 0 1.4rem;
+  transition: all 0.35s;
+}
+
+input:checked+.collapsible-item-label::after {
+  transform: rotate(90deg);
+}
+input:checked~.collapsible-item-content {
+  max-height: 100vh;
+  padding: 1em;
+}
+
+/* --------------------------- */
+/* l'affichage de la criticité */
+.nombre_cercle {
+  display: inline-block;
+  line-height: 0px;
+  border-radius: 50%;
+  font-size: 1.3em;
+}
+.nombre_cercle span {
+  display: inline-block;
+  padding-top: 50%;
+  padding-bottom: 50%;
+  margin-left: 0.2em;
+  margin-right: 0.2em;
+  height: 2em;
+  width: 2em;
+  text-align: center;
+}
+
+.tooltip {
+  position: absolute;
+  z-index: -1;
+  visibility: hidden;
+}
+.criticite:hover .tooltip {
+  visibility: visible;
+}
+
+/* --------------------------- */
+/* marque de notification sur un icône
+NON UTILISE POUR L'INSTANT DANS LE CODE */
+.icon.has-update-mark {
+  position: relative;
+}
+.icon.has-update-mark:after {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  position: absolute;
+  top: 1px;
+  right: 0.65rem;
+  background-color: var(--bulma-warning);
+  border-radius: 9999px;
+}

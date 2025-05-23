@@ -1,0 +1,45 @@
+{% load inventaire_extras %}
+
+{# localisation #}
+<div class="collapsible-accordion">
+    <div class="collapsible-item">
+        <input type="checkbox" id="tab1" class="checkbox-tab">
+        <label class="collapsible-item-label has-background-text-soft" for="tab1">Localisation</label>
+        <div class="collapsible-item-content">
+            <div id="field_localisation_usid" class="field">
+                {{ form.zone_usid|bulma_form_label }}
+                {{ form.zone_usid }}
+            </div>
+        </div>
+    </div>
+</div>
+
+{# généralités #}
+<div id="accordion_generalite" class="collapsible-accordion">
+    <div class="collapsible-item">
+        <input type="checkbox" id="tab2" class="checkbox-tab">
+        <label class="collapsible-item-label has-background-text-soft" for="tab2">Généralités</label>
+        <div class="collapsible-item-content">
+            <div class="field">
+                {{ form.numero_marche|bulma_form_label }}
+                <div class="control is-expanded">
+                    {{ form.numero_marche }}
+                </div>
+            </div>
+            <div class="field">
+                {{ form.nom_societe|bulma_form_label }}
+                <div class="control is-expanded">
+                    {{ form.nom_societe }}
+                </div>
+            </div>
+            <div class="field">
+                {{ form.date_fin|bulma_form_label }}
+                {{ form.date_fin }}
+            </div>
+            <div class="field">
+                {{ form.est_actif|bulma_form_label_checkbox }}
+                {{ form.est_actif }}
+            </div>
+        </div>
+    </div>
+</div>

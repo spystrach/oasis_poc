@@ -1,0 +1,55 @@
+{% extends 'inventaire/base.html' %}
+
+{% load static %}
+{% load inventaire_extras %}
+
+{% block titre %}
+<title>OASIS - Connection</title>
+{% endblock %}
+
+{% block contenu_principal %}
+
+{% if demo %}
+<article class="message is-warning">
+  <div class="message-header">
+    <p>Site de démonstration</p>
+  </div>
+  <div class="message-body">
+      <p>Ce site est une démonstration du projet OASIS. <strong>Aucune donnée présente n'est réelle.</strong></p>
+      </br>
+      <p>Utiliser les identifiants suivants pour vous connecter :</p>
+      <p>Nom d'utilisateur : <strong>demo</strong></p>
+      <p>Mot de passe: <strong>demo</strong></p>
+  </div>
+</article>
+{% endif %}
+<form action="{% url 'inventaire:login' %}" method="post">
+    {% csrf_token %}
+
+    {# les notifications #}
+    {% include 'inventaire/_notifications.html' %}
+    <div class="field">
+        {{ form.username|bulma_form_label }}
+        <div class="control is-expanded">
+            {{ form.username }}
+        </div>
+        {% if form.username.errors %}
+        {{ form.username.errors }}
+        {% endif %}
+    </div>
+    <div class="field">
+        {{ form.password|bulma_form_label }}
+        <div class="control is-expanded">
+            {{ form.password }}
+        </div>
+        {% if form.password.errors %}
+        {{ form.password.errors }}
+        {% endif %}
+    </div>
+    <div class="field">
+        <div class="control">
+            <button type="submit" class="button is-info">Connexion</button>
+        </div>
+    </div>
+</form>
+{% endblock %}

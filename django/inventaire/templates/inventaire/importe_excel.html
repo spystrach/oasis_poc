@@ -1,0 +1,99 @@
+{% extends 'inventaire/base.html' %}
+
+{% load static %}
+{% load inventaire_extras %}
+
+{% block titre %}
+<title>OASIS - Import</title>
+{% endblock %}
+
+{% block contenu_principal %}
+
+
+<form id="id_html_form" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {# la barre du haut du contenu #}
+    <div class="is-title-bar mb-6">
+        <div class="level">
+            <div class="level-left">
+                <div class="level-item">
+                    <h1 class="title mt-2 mb-2">Import de fichier excel</h1>
+                </div>
+            </div>
+            <div class="level-right">
+                <div class="level-item">
+                    <button type="submit" class="button is-info">
+                        <span class="icon"><i class="fa-solid fa-file-import"></i></span>
+                        <span>Importer</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# les notifications #}
+    {% include 'inventaire/_notifications.html' %}
+
+    {# la carte avec les éléments à renseigner #}
+    <div class="fixed-grid has-2-cols">
+        <div class="grid">
+            <div class="cell is-col-span-2">
+                <div class="card">
+                    <div class="card-header has-background-info-soft">
+                        <p class="card-header-title">Formulaire d'import de fichier Excel</p>
+                    </div>
+                    <div class="card-content grid">
+                        <div class="cell">
+                            <div class="field">
+                                <div class="select is-info is-fullwidth">
+                                    {{ form.zone }}
+                                </div>
+                                {% if form.zone.errors %}
+                                {{ form.zone.errors }}
+                                {% endif %}
+                            </div>
+                            <div class="field">
+                                <div class="file has-name is-fullwidth is-info">
+                                    <label class="file-label">
+                                        {{ form.fichier }}
+                                        <span class="file-cta">
+                                            <span class="file-icon">
+                                                <i class="fas fa-upload"></i>
+                                            </span>
+                                            <span class="file-label">Choisissez un fichier</span>
+                                        </span>
+                                        <span id="file_name" class="file-name">Aucun fichier sélectionné</span>
+                                    </label>
+                                </div>
+                                {% if form.fichier.errors %}
+                                {{ form.fichier.errors }}
+                                {% endif %}
+                            </div>
+                            <div class="field">
+                                {{ form.nettoie|bulma_form_label_checkbox }}
+                                {{ form.nettoie }}
+                                {% if form.nettoie.errors %}
+                                {{ form.nettoie.errors }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block extra_script %}
+<script>
+const fichier_input = document.getElementById("id_fichier");
+const fichier_name = document.getElementById("file_name");
+fichier_input.onchange = () => {
+    if (fichier_input.files.length > 0) {
+        fichier_name.textContent = fichier_input.files[0].name;
+    }
+};
+</script>
+{% endblock %}

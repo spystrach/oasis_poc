@@ -1,0 +1,16 @@
+[run]
+omit =
+    # ignore les fichiers django non modifiables
+    django/manage.py
+    django/oasis/__init__.py
+    django/oasis/asgi.py
+    django/oasis/wsgi.py
+
+    # ignore les migrations
+    django/inventaire/migrations/*
+
+[coverage:report]
+skip_empty = true
+omit =
+    # ignore les fichiers de tests
+    django/*/tests/*

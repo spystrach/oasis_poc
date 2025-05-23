@@ -1,0 +1,96 @@
+{% extends 'inventaire/base.html' %}
+
+{% load static %}
+{% load inventaire_extras %}
+
+{% block titre %}
+<title>OASIS - Import</title>
+{% endblock %}
+
+{% block contenu_principal %}
+{# la barre du haut du contenu #}
+<div class="is-title-bar mb-6">
+    <div class="level">
+        <div class="level-left">
+            <div class="level-item">
+                <h1 class="title mt-2 mb-2">{{ state_str }}</h1>
+            </div>
+        </div>
+        <div class="level-right">
+            <div class="level-item">
+                <a id="retour" class="button is-info is-soft" href="{% url 'inventaire:import_excel' %}" {% if not result %}disabled{% endif %}>
+                    <span class="icon"><i class="fa-solid fa-arrow-rotate-left"></i></span>
+                    <span>Retour</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# la carte avec les éléments à renseigner #}
+<div class="fixed-grid has-2-cols">
+    <div class="grid">
+        <div class="cell is-col-span-2">
+            {% if not result %}
+                <progress class="progress is-info" max="100"></progress>
+            {% else %}
+                <div class="card">
+                    {% if result.status == 0 %}
+                    <div class="card-header has-background-success-soft">
+                    <p class="card-header-title">Importation terminée avec succès</p>
+                    </div>
+                    {% elif result.status == 1 %}
+                    <div class="card-header has-background-warning-soft">
+                    <p class="card-header-title">Importation terminée avec quelques erreurs</p>
+                    </div>
+                    {% elif result.status == 2 %}
+                    <div class="card-header has-background-danger-soft">
+                    <p class="card-header-title">Importation fortement incomplète, le fichier excel contient des erreurs sur l'onglet S2I</p>
+                    </div>
+                    {% elif result.status == 3 %}
+                    <div class="card-header has-background-danger-soft">
+                    <p class="card-header-title">Importation non réalisée, une erreur est survenue</p>
+                    </div>
+                    {% elif result.status == 4 %}
+                    <div class="card-header has-background-danger-soft">
+                    <p class="card-header-title">Impossible d'importer les données</p>
+                    </div>
+                    {% endif %}
+                <div class="card-content">
+                    {% for type, msg in result.messages %}
+                    {% if type == 0 %}
+                    <p class="has-text-success">{{msg}}</p>
+                    {% elif type == 1 %}
+                    <p>{{msg}}</p>
+                    {% else %}
+                    <p class="has-text-danger">{{msg}}</p>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block extra_script %}
+{% if not result %}
+<script>
+    state = "{{state}}";
+    function reload_when_finished() {
+        // envoie une requête AJAX au serveur pour obtenir le statut
+        const request = new Request("{% url 'inventaire:api_import' task_id %}", {method: "GET"});
+        fetch(request)
+            .then(response => response.json())
+            .then(result => {
+                if (result['status'] != state) {
+                    window.location.reload();
+                }
+            })
+    }
+    const myinterval = setInterval(reload_when_finished, 4000);
+</script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,125 @@
+{% load inventaire_extras %}
+
+{# localisation #}
+<div class="collapsible-accordion">
+    <div class="collapsible-item">
+        <input type="checkbox" id="tab1" class="checkbox-tab">
+        <label class="collapsible-item-label has-background-text-soft" for="tab1">Localisation</label>
+        <div class="collapsible-item-content">
+            <div id="field_localisation_usid" class="field">
+                {{ form.z_usid|bulma_form_label }}
+                {{ form.z_usid }}
+                {% if form.z_usid.errors %}
+                {{ form.z_usid.errors }}
+                {% endif %}
+            </div>
+            <div id="field_localisation_ville" class="field">
+                {{ form.z_ville|bulma_form_label }}
+                {{ form.z_ville }}
+                {% if form.z_ville.errors %}
+                {{ form.z_ville.errors }}
+                {% endif %}
+            </div>
+            <div id="field_localisation_quartier" class="field">
+                {{ form.z_quartier|bulma_form_label }}
+                {{ form.z_quartier }}
+                {% if form.z_quartier.errors %}
+                {{ form.z_quartier.errors }}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{# systèmes industriels #}
+<div class="collapsible-accordion">
+    <div class="collapsible-item">
+        <input type="checkbox" id="tab2" class="checkbox-tab">
+        <label class="collapsible-item-label has-background-text-soft" for="tab2">Systèmes</label>
+        <div class="collapsible-item-content">
+            <div class="field">
+                {{ form.s_nom|bulma_form_label }}
+                <div class="control is-expanded">
+                    {{ form.s_nom }}
+                </div>
+            </div>
+            <div class="field">
+                {{ form.s_metier|bulma_form_label }}
+                {{ form.s_metier }}
+            </div>
+            <div class="field">
+                {{ form.s_classe|bulma_form_label }}
+                {{ form.s_classe }}
+            </div>
+            <div class="field">
+                {{ form.s_fin|bulma_form_label }}
+                {{ form.s_fin }}
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Ordinateurs et serveurs #}
+<div class="collapsible-accordion">
+    <div class="collapsible-item">
+        <input type="checkbox" id="tab3" class="checkbox-tab">
+        <label class="collapsible-item-label has-background-text-soft" for="tab3">Ordinateurs / serveurs</label>
+        <div class="collapsible-item-content">
+            <div class="field">
+                {{ form.o_fonction|bulma_form_label }}
+                {{ form.o_fonction }}
+            </div>
+            <div class="field">
+                {{ form.o_famille|bulma_form_label }}
+                {{ form.o_famille }}
+            </div>
+            <div class="field">
+                {{ form.o_marque_modele|bulma_form_label }}
+                <div class="control is-expanded">
+                    {{ form.o_marque_modele }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# matériels divers #}
+<div class="collapsible-accordion">
+    <div class="collapsible-item">
+        <input type="checkbox" id="tab4" class="checkbox-tab">
+        <label class="collapsible-item-label has-background-text-soft" for="tab4">Equipements divers</label>
+        <div class="collapsible-item-content">
+            <div class="field">
+                {{ form.e_type|bulma_form_label }}
+                {{ form.e_type }}
+            </div>
+            <div class="field">
+                {{ form.e_marque_modele|bulma_form_label }}
+                <div class="control is-expanded">
+                    {{ form.e_marque_modele }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# licences de logiciels #}
+<div class="collapsible-accordion">
+    <div class="collapsible-item">
+        <input type="checkbox" id="tab5" class="checkbox-tab">
+        <label class="collapsible-item-label has-background-text-soft" for="tab5">Logiciels</label>
+        <div class="collapsible-item-content">
+            <div class="field">
+                {{ form.l_editeur_logiciel|bulma_form_label }}
+                <div class="control is-expanded">
+                    {{ form.l_editeur_logiciel }}
+                </div>
+            </div>
+            <div class="field">
+                {{ form.l_fin|bulma_form_label }}
+                {{ form.l_fin }}
+            </div>
+        </div>
+    </div>
+</div>
+

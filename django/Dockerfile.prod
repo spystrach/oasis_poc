@@ -1,0 +1,34 @@
+FROM python:3.11-alpine
+ARG utilisateur="app"
+
+# installation des dépendances
+RUN apk add --update netcat-openbsd
+
+# utilisateur non root
+RUN adduser --disabled-password --gecos "" --home "/home/$utilisateur" $utilisateur \
+    && chown -R $utilisateur:$utilisateur /home/$utilisateur
+
+# dossier des fichiers statiques
+WORKDIR /home/$utilisateur
+RUN mkdir /home/$utilisateur/staticfiles
+RUN mkdir /home/$utilisateur/tempo
+
+# installation des dépendances python
+COPY ./requirements.txt .
+RUN pip install -r requirements.txt
+
+# paramétrage de l'entrypoint
+COPY entrypoint.prod.sh .
+RUN sed -i 's/\r$//g' entrypoint.prod.sh
+RUN chmod +x entrypoint.prod.sh
+
+# copie des fichiers
+COPY ./manage.py .
+COPY ./oasis/ oasis/
+COPY ./inventaire/ inventaire/
+
+# affectation des droits
+RUN chown -R $utilisateur:$utilisateur /home/$utilisateur
+USER $utilisateur
+
+ENTRYPOINT ["/home/app/entrypoint.prod.sh"]

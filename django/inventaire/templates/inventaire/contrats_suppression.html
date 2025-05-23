@@ -1,0 +1,39 @@
+{% extends 'inventaire/base.html' %}
+
+{% load static %}
+{% load inventaire_extras %}
+
+{% block titre %}
+<title>OASIS - Suppression contrat</title>
+{% endblock %}
+
+{% block contenu_principal %}
+<form method="post">
+    {% csrf_token %}
+
+    {# la barre du haut du contenu #}
+    <div class="is-title-bar mb-6">
+        <div class="level">
+            <div class="level-left">
+                <div class="level-item">
+                    <h1 class="title mt-2 mb-2">Contrat : {{ object.numero_marche }}</h1>
+                </div>
+            </div>
+            <div class="level-right">
+                <div class="level-item">
+                    <a class="button is-info is-soft" href="{% url 'inventaire:contrats_details' object.pk %}">
+                        <span class="icon"><i class="fa-solid fa-ban"></i></span>
+                        <span>Annuler</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="button is-danger">
+        <span class="icon"><i class="fa-solid fa-skull-crossbones"></i></span>
+        <span>Confirmer la suppression</span>
+    </button>
+</form>
+{% endblock %}
+

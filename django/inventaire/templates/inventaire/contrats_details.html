@@ -1,0 +1,154 @@
+{% extends 'inventaire/base.html' %}
+
+{% load static %}
+{% load inventaire_extras %}
+
+{% block titre %}
+<title>OASIS - Détails contrat</title>
+{% endblock %}
+
+{% block contenu_principal %}
+{# la barre du haut du contenu #}
+<div class="is-title-bar mb-6">
+    <div class="level">
+        <div class="level-left">
+            <div class="level-item">
+                <div class="content">
+                    <h1 class="title mt-2 mb-2">Contrat : {{ contrat.numero_marche }}</h1>
+                    <p>Modifié le {{ contrat.fiche_date|format_date_court }} par {{ contrat.fiche_utilisateur.get_full_name }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="level-right">
+            <div class="level-item">
+                <div class="buttons">
+                    {% if droit_modification %}
+                    <a class="button is-info" href="{% url 'inventaire:contrats_modification' contrat.pk %}">
+                        <span class="icon"><i class="fa-solid fa-pen-to-square"></i></span>
+                        <span>Modifier</span>
+                    </a>
+                    {% endif %}
+                    <a class="button is-info is-soft" href="" disabled>
+                        <span class="icon"><i class="fa-solid fa-file-export"></i></span>
+                        <span>Exporter</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# les notifications #}
+{% include 'inventaire/_notifications.html' %}
+
+{# les cartes avec les éléments à renseigner #}
+<div class="fixed-grid has-2-cols">
+    <div class="grid">
+        {# les généralités et l'entreprise titulaire#}
+        <div class="cell">
+            <div class="card">
+                <div class=" card-header has-background-info-soft">
+                    <p class="card-header-title">Généralités</p>
+                </div>
+                <div class="card-content grid">
+                    <div class="cell">
+                        <div class="content">
+                            <p class="heading">USID</p>
+                            <p>{{ contrat.get_zone_usid_display }}</p>
+                        </div>
+                    </div>
+                    <div class="cell">
+                        <div class="content">
+                            <p class="heading">Date d'expiration</p>
+                            <p>{{ contrat.date_fin|format_date_long }}</p>
+                        </div>
+                    </div>
+                    <div class="cell">
+                        <div class="content">
+                            <p class="heading">Actif</p>
+                            {% if contrat.est_actif %}
+                            <span class="icon has-text-success"><i class="fa-solid fa-circle-check"></i></span>
+                            {% else %}
+                            <span class="icon has-text-danger"><i class="fa-solid fa-circle-xmark"></i></span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="cell">
+            <div class="card">
+                <div class=" card-header has-background-info-soft">
+                    <p class="card-header-title">Titulaire du contrat</p>
+                </div>
+                <div class="card-content grid">
+                    <div class="cell">
+                        <div class="content">
+                            <p class="heading">Entreprise</p>
+                            <p>{{ contrat.nom_societe }}</p>
+                        </div>
+                    </div>
+                    <div class="cell">
+                        <div class="content">
+                            <p class="heading">Point de contact</p>
+                            <p>{{ contrat.nom_poc }}</p>
+                        </div>
+                    </div>
+                    <div class="cell is-col-span-2">
+                        <div class="content">
+                            <p class="heading">Description</p>
+                            <p>{{ contrat.description }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# les systèmes reliés à ce contrat #}
+        {% if tous_systemes_lies %}
+        <div class="cell is-col-span-2">
+            <div class="card">
+                <div class=" card-header has-background-info-soft">
+                    <p class="card-header-title">Systèmes utilisant ce contrat</p>
+                </div>
+                <div class="card-content">
+                    <div class="table-container">
+                        <table class="table is-striped is-hoverable is-narrow is-fullwidth">
+                            <thead>
+                            <tr>
+                                <th><p class="mt-1 content is-small">USID</p></th>
+                                <th><p class="mt-1 content is-small">Ville</p></th>
+                                <th><p class="mt-1 content is-small">Quartier</p></th>
+                                <th><p class="mt-1 content is-small">Nom</p></th>
+                                <th><p class="mt-1 content is-small">Domaine métier</p></th>
+                                <th><p class="mt-1 content is-small">Dernière intervention</p></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for x in tous_systemes_lies %}
+                            <tr>
+                                <td><p class="mt-1 content is-small">{{ x.localisation.get_zone_usid_display }}</p></td>
+                                <td><p class="mt-1 content is-small">{{ x.localisation.nom_ville }}</p></td>
+                                <td><p class="mt-1 content is-small">{{ x.localisation.nom_quartier }}</p></td>
+                                <td><p class="mt-1 content is-small"><a
+                                        href="{% url 'inventaire:systemes_details' x.id %}">{{ x.nom }}</a></p></td>
+                                <td><p class="mt-1 content is-small">{{ x.domaine_metier }}</p></td>
+                                {% if x.date_maintenance %}
+                                <td><p class="mt-1 content is-small">{{ x.date_maintenance|format_date_court }}</p></td>
+                                {% else %}
+                                <td><p class="mt-1 content is-small"><span class="icon"><i
+                                        class="fa-solid fa-minus"></i></span></p></td>
+                                {% endif %}
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,150 @@
+{% extends 'inventaire/base.html' %}
+
+{% load static %}
+{% load inventaire_extras %}
+
+{% block titre %}
+<title>OASIS - Modification contrat</title>
+{% endblock %}
+
+{% block contenu_principal %}
+<form id="id_html_form" method="post">
+    {% csrf_token %}
+
+    {# la barre du haut du contenu #}
+    <div class="is-title-bar mb-6">
+        <div class="level">
+            <div class="level-left">
+                <div class="level-item content">
+                    <h1 class="mt-2 mb-2">Contrat :</h1>
+                    <p class="ml-3 mt-auto mb-auto">{{ form.numero_marche }}</p>
+                    {% if form.numero_marche.errors %}
+                    {{ form.numero_marche.errors }}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="level-right">
+                <div class="level-item">
+                    <div class="buttons">
+                        <button type="submit" class="button is-info">
+                            <span class="icon"><i class="fa-solid fa-floppy-disk"></i></span>
+                            <span>Enregistrer</span>
+                        </button>
+                        {% if mode == "modification" %}
+                        <a class="button is-info is-soft" href="{% url 'inventaire:contrats_details' object.pk %}">
+                            <span class="icon"><i class="fa-solid fa-ban"></i></span>
+                            <span>Annuler</span>
+                        </a>
+                        <a class="button is-danger is-soft" href="{% url 'inventaire:contrats_suppression' object.pk %}">
+                            <span class="icon"><i class="fa-solid fa-trash-can"></i></span>
+                            <span>Supprimer</span>
+                        </a>
+                        {% else %}
+                        <div class="level-item">
+                            <a class="button is-info is-soft" href="{% url 'inventaire:contrats_recherche' %}">
+                                <span class="icon"><i class="fa-solid fa-ban"></i></span>
+                                <span>Annuler</span>
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# les notifications #}
+    {% include 'inventaire/_notifications.html' %}
+
+    {# les cartes avec les éléments à renseigner #}
+    <div class="fixed-grid has-2-cols">
+        <div class="grid">
+            {# les généralités et l'entreprise titulaire#}
+            <div class="cell">
+                <div class="card">
+                    <div class=" card-header has-background-info-soft">
+                        <p class="card-header-title">Généralités</p>
+                    </div>
+                    <div class="card-content grid">
+                        <div class="cell">
+                            <div class="field">
+                                {{ form.zone_usid|bulma_form_label:'small' }}
+                                <div class="select is-warning is-small is-fullwidth">
+                                    {{ form.zone_usid }}
+                                </div>
+                                {% if form.zone_usid.errors %}
+                                {{ form.zone_usid.errors }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="cell">
+                            <div class="field">
+                                {{ form.date_fin|bulma_form_label:'small' }}
+                                <div class="control">
+                                    {{ form.date_fin }}
+                                </div>
+                                {% if form.date_fin.errors %}
+                                {{ form.date_fin.errors }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="cell">
+                            <div class="field">
+                                {{ form.est_actif|bulma_form_label:'small' }}
+                                <div class="control">
+                                    {{ form.est_actif }}
+                                </div>
+                                {% if form.est_actif.errors %}
+                                {{ form.est_actif.errors }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="cell">
+                <div class="card">
+                    <div class=" card-header has-background-info-soft">
+                        <p class="card-header-title">Titulaire du contrat</p>
+                    </div>
+                    <div class="card-content grid">
+                        <div class="cell">
+                            <div class="field">
+                                {{ form.nom_societe|bulma_form_label:'small' }}
+                                <div class="control">
+                                    {{ form.nom_societe }}
+                                </div>
+                                {% if form.nom_societe.errors %}
+                                {{ form.nom_societe.errors }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="cell">
+                            <div class="field">
+                                {{ form.nom_poc|bulma_form_label:'small' }}
+                                <div class="control">
+                                    {{ form.nom_poc }}
+                                </div>
+                                {% if form.nom_poc.errors %}
+                                {{ form.nom_poc.errors }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="cell">
+                            <div class="field">
+                                {{ form.description|bulma_form_label:'small' }}
+                                <div class="control">
+                                    {{ form.description }}
+                                </div>
+                                {% if form.description.errors %}
+                                {{ form.description.errors }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}

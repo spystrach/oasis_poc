@@ -1,0 +1,122 @@
+{% extends 'inventaire/base.html' %}
+
+{% load static %}
+{% load inventaire_extras %}
+
+{% block titre %}
+<title>OASIS - Compte</title>
+{% endblock %}
+
+{% block contenu_principal %}
+{# la barre du haut du contenu #}
+<div class="is-title-bar mb-6">
+    <div class="level">
+        <div class="level-left">
+            <div class="level-item">
+                <h1 class="title mt-2 mb-2">Profil et réglages</h1>
+            </div>
+        </div>
+        <div class="level-right">
+            <div class="level-item">
+                <div class="content is-flex is-flex-direction-column is-align-items-end">
+                    <p class="heading">Dernière connection le</p>
+                    <p>{{ user.last_login|format_date_heure_court }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# les cartes avec les éléments à renseigner #}
+<div class="fixed-grid has-2-cols">
+    <div class="grid">
+        {# les informations personelles #}
+        <div class="cell is-col-span-2">
+            <div class="card">
+                <div class="card-header has-background-info-soft">
+                    <p class="card-header-title">Informations</p>
+                </div>
+                <div class="card-content grid">
+                    <div class="cell">
+                        <div class="content">
+                            <p class="heading">Pseudo</p>
+                            <p>{{ user.username }}</p>
+                        </div>
+                    </div>
+                    <div class="cell">
+                        <div class="content">
+                            <p class="heading">Prénom</p>
+                            <p>{{ user.first_name }}</p>
+                        </div>
+                    </div>
+                    <div class="cell">
+                        <div class="content">
+                            <p class="heading">Nom</p>
+                            <p>{{ user.last_name }}</p>
+                        </div>
+                    </div>
+                    <div class="cell">
+                        <div class="content">
+                            <p class="heading">Mail</p>
+                            <p>{{ user.email }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# les autorisations #}
+        <div class="cell is-col-span-2">
+            <div class="card">
+                <div class="card-header has-background-info-soft">
+                    <p class="card-header-title">Autorisations</p>
+                </div>
+                <div class="card-content grid">
+                    <div class="cell">
+                        <div class="content">
+                            <p class="heading">Equipe d'administration</p>
+                            {% if user.is_staff %}
+                            <span class="icon has-text-success"><i class="fa-solid fa-circle-check"></i></span>
+                            {% else %}
+                            <span class="icon has-text-danger"><i class="fa-solid fa-circle-xmark"></i></span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="cell">
+                        <div class="content">
+                            <p class="heading">Zones consultables</p>
+                            <ul>
+                                {% for x in zones_consultation %}
+                                <li>{{ x }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="cell">
+                        <div class="content">
+                            <p class="heading">Zones modifiables</p>
+                            <ul>
+                                {% for x in zones_modification %}
+                                <li>{{ x }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="cell">
+                        <div class="content">
+                            <p class="heading">Groupes fonctionnels</p>
+                            <ul>
+                                {% for x in groupes_fct %}
+                                <li>{{ x }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+

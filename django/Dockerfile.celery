@@ -1,0 +1,21 @@
+FROM python:3.11-alpine
+ARG utilisateur="app"
+
+# utilisateur non root
+RUN adduser --disabled-password --gecos "" --home "/home/$utilisateur" $utilisateur \
+    && chown -R $utilisateur:$utilisateur /home/$utilisateur
+
+# dossier des fichiers statiques
+WORKDIR /home/$utilisateur
+
+# installation des dépendances python
+COPY ./requirements.txt .
+RUN pip install -r requirements.txt
+
+# copie des fichiers
+COPY ./oasis/ oasis/
+COPY ./inventaire/ inventaire/
+
+# affectation des droits
+RUN chown -R $utilisateur:$utilisateur /home/$utilisateur
+USER $utilisateur
