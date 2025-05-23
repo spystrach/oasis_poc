@@ -15,7 +15,8 @@ Ce projet est conteneurisé, la machine sur lequel sera déployé le projet devr
 ### Variables d'environnement
 
 Les variables doivent être créés dans un fichier *env/stack.prod.env*. Les tableaux ci-dessous 
-les listent. Les variables en gras sont absolument à changer :
+les listent. Les variables en gras sont absolument à changer.
+Le dossier *env_exemple* fournit l'ensemble des variables, prêt à fonctionner pour des tests.
 
 #### Serveur web
 
@@ -34,7 +35,7 @@ les listent. Les variables en gras sont absolument à changer :
 | ***MAIL_CONTACT***         | l'adresse mail pour les demandes de contacts                          |
 | ***DEMO_BANNER***          | si le site est en mode démonstration (page de login avec un message)  |
 
-#### Base de donnée
+#### Base de donnée SQL
 
 | Nom de la variable      | explication de la variable                 |
 |-------------------------|--------------------------------------------|
@@ -43,6 +44,22 @@ les listent. Les variables en gras sont absolument à changer :
 | ***POSTGRES_DB***       | le nom de la base de donnée                |
 
 *Nota : ces variables doivent correspondre avec celles définies pour le serveur web.*
+
+#### Base de donnée clef=valeur
+
+| Nom de la variable      | explication de la variable              |
+|-------------------------|-----------------------------------------|
+| ***REDIS_PASSWORD***    | le mot de passe pour accéder au service |
+
+#### Taches de fond
+
+| Nom de la variable          | explication de la variable                                                 |
+|-----------------------------|----------------------------------------------------------------------------|
+| ***CELERY_BROKER_URL***     | l'url de connection pour le service de transmission de message             |
+| ***CELERY_RESULT_BACKEND*** | l'url de connection vers le service de stockage des résultats              |
+| *CELERY_TASK_TRACK_STARTE** | définit si le service suit plus précisément l'état d'execution d'une tache |
+
+*Nota : ces variables doivent correspondre avec celles définies pour la base de donnée clef=valeur.*
 
 ### Lancement
 

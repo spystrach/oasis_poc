@@ -162,7 +162,6 @@ LOGGING = {
 
 MAIL_CONTACT = getenv("MAIL_CONTACT", "")
 DEMO_BANNER = getenv("DEMO_BANNER", "true").lower() == "true"
-CHEMIN_D2_EXEC = getenv("CHEMIN_D2_EXEC", None)
 
 
 # celery async workers

@@ -68,7 +68,8 @@ est créé automatiquement.
 ### Variables d'environnement
 
 Les variables doivent être créés dans un fichier *env/stack.pre-prod.env*. Les tableaux 
-ci-dessous les listent. Les variables en gras sont absolument à changer :
+ci-dessous les listent. Les variables en gras sont absolument à changer. 
+Le dossier *env_exemple* fournit l'ensemble des variables, prêt à fonctionner pour des tests.
 
 #### Serveur web
 
@@ -99,6 +100,22 @@ ci-dessous les listent. Les variables en gras sont absolument à changer :
 | ***POSTGRES_DB***       | le nom de la base de donnée                |
 
 *Nota : ces variables doivent correspondre avec celles définies pour le serveur web.*
+
+#### Base de donnée clef=valeur
+
+| Nom de la variable      | explication de la variable              |
+|-------------------------|-----------------------------------------|
+| ***REDIS_PASSWORD***    | le mot de passe pour accéder au service |
+
+#### Taches de fond
+
+| Nom de la variable          | explication de la variable                                                 |
+|-----------------------------|----------------------------------------------------------------------------|
+| ***CELERY_BROKER_URL***     | l'url de connection pour le service de transmission de message             |
+| ***CELERY_RESULT_BACKEND*** | l'url de connection vers le service de stockage des résultats              |
+| *CELERY_TASK_TRACK_STARTE** | définit si le service suit plus précisément l'état d'execution d'une tache |
+
+*Nota : ces variables doivent correspondre avec celles définies pour la base de donnée clef=valeur.*
 
 ### Lancement
 
