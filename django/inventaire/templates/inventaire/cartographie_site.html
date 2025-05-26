@@ -13,6 +13,23 @@
 {% elif mode == 0 %}
 <script src="{% static 'inventaire/ext/mermaid.js' %}"></script>
 <script>mermaid.initialize({ startOnLoad: true });</script>
+<script src="{% static 'inventaire/ext/svg-pan-zoom.js' %}"></script>
+<style>
+#myMermaidContainer {
+  width: 100%;
+  height: 450px;
+  border: 1px solid #ccc;
+}
+#myMermaid {
+  width: 100%;
+  height: 100%;
+}
+#myMermaidContainer svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+</style>
 {% endif %}
 {% endblock %}
 
@@ -95,12 +112,12 @@
 <div class="box">
     <figure class="image">
         {% if mode == 1 %}
-        <div id="myDiagramDiv" style="width:800px; height:450px; background-color: #DAE4E4;">
+        <div id="myDiagramDiv" style="width:100%; height:450px; background-color: #DAE4E4;">
         </div>
         {% elif mode == 0 %}
-        <pre class="mermaid">
-            {{ dessin }}
-        </pre>
+        <div id="myMermaidContainer">
+            <pre id="myMermaid" class="mermaid">{{ dessin }}</pre>
+        </div>
         {% endif %}
     </figure>
 </div>
@@ -147,6 +164,43 @@
     {% autoescape off %}
         diagram.model = go.Model.fromJson({{ dessin }});
     {% endautoescape %}
+</script>
+{% elif mode == 0 %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const mermaidElement = document.getElementById("myMermaid");
+  const observer = new MutationObserver(() => {
+    if (mermaidElement.getAttribute("data-processed") === "true") {
+      observer.disconnect();
+
+      // Attendre un tout petit délai pour que le SVG soit inséré et correctement dimensionné
+      requestAnimationFrame(() => {
+        const svg = document.querySelector("#myMermaidContainer svg");
+
+        if (!svg.hasAttribute("viewBox")) {
+            const bbox = svg.getBBox();
+            svg.setAttribute("viewBox", `0 0 ${bbox.width} ${bbox.height}`);
+        }
+
+        // Appliquer svg-pan-zoom
+        svgPanZoom(svg, {
+          zoomEnabled: true,
+          controlIconsEnabled: false,
+          fit: true,
+          center: true,
+          minZoom: 0.2,
+          maxZoom: 10,
+          zoomScaleSensitivity: 0.2,
+           dblClickZoomEnabled: false
+        });
+
+        // bug ou feature ??
+        svg.style.maxWidth = "";
+      });
+    }
+  });
+  observer.observe(mermaidElement, { attributes: true, attributeFilter: ["data-processed"] });
+});
 </script>
 {% endif %}
 {% endblock %}
