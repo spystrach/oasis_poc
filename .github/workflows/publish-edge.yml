@@ -3,6 +3,7 @@
 name: Publish Edge
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
