@@ -2,7 +2,7 @@
 
 Une preuve de concept pour l'inventaire des systèmes industriels.
 
-**Le dossier env_exemple fournit un exemple de configuration. Ils ne doivent pas être utilisés tels quels !**
+**Le dossier `env_exemple` fournit un exemple de configuration. Ils ne doivent pas être utilisés tels quels !**
 
 ## Déploiement
 
@@ -57,7 +57,7 @@ Le dossier *env_exemple* fournit l'ensemble des variables, prêt à fonctionner 
 |-----------------------------|----------------------------------------------------------------------------|
 | ***CELERY_BROKER_URL***     | l'url de connection pour le service de transmission de message             |
 | ***CELERY_RESULT_BACKEND*** | l'url de connection vers le service de stockage des résultats              |
-| *CELERY_TASK_TRACK_STARTE** | définit si le service suit plus précisément l'état d'execution d'une tache |
+| *CELERY_TASK_TRACK_START**  | définit si le service suit plus précisément l'état d'execution d'une tache |
 
 *Nota : ces variables doivent correspondre avec celles définies pour la base de donnée clef=valeur.*
 
@@ -66,7 +66,9 @@ Le dossier *env_exemple* fournit l'ensemble des variables, prêt à fonctionner 
 Il suffit de lancer via docker-compose (ou un orchestrateur) le fichier **docker-compose.prod.yml**.
 Les images seront téléchargées puis les conteneurs démarrés automatiquement.
 
-`docker-compose -f docker-compose.prod.yml up`
+```shell
+docker-compose -f docker-compose.prod.yml up
+```
 
 Pour le déploiement en mode développement et pré-production, consulter 
 *[CONTRIBUTING.md](./CONTRIBUTING.md)*.
